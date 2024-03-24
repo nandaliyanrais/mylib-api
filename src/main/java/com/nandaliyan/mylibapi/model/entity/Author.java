@@ -32,4 +32,6 @@ public class Author {
     @OneToMany(mappedBy = "author")
     private List<Book> book;
 
+    private Boolean isActive;
+
 }
