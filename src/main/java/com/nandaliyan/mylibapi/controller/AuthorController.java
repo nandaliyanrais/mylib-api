@@ -18,6 +18,7 @@ import com.nandaliyan.mylibapi.model.response.AuthorResponse;
 import com.nandaliyan.mylibapi.model.response.CommonResponse;
 import com.nandaliyan.mylibapi.service.AuthorService;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -28,7 +29,7 @@ public class AuthorController {
     private final AuthorService authorService;
 
     @PostMapping
-    public ResponseEntity<?> createAuthor(@RequestBody AuthorRequest request) {
+    public ResponseEntity<?> createAuthor(@Valid @RequestBody AuthorRequest request) {
         AuthorResponse authorResponse = authorService.createWithDto(request);
         CommonResponse<AuthorResponse> response = CommonResponse.<AuthorResponse>builder()
                 .statusCode(HttpStatus.CREATED.value())
@@ -64,7 +65,7 @@ public class AuthorController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> updateAuthorById(@PathVariable Long id, @RequestBody AuthorRequest request) {
+    public ResponseEntity<?> updateAuthorById(@PathVariable Long id, @Valid @RequestBody AuthorRequest request) {
         AuthorResponse authorResponse = authorService.updateWithDto(id, request);
         CommonResponse<AuthorResponse> response = CommonResponse.<AuthorResponse>builder()
                 .statusCode(HttpStatus.OK.value())

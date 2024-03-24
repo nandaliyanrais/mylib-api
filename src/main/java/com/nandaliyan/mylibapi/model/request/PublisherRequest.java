@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @Builder(toBuilder = true)
 @AllArgsConstructor
 @NoArgsConstructor
-public class AuthorRequest {
+public class PublisherRequest {
 
     @NotBlank(message = "Name is required.")
     private String name;

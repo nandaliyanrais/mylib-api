@@ -68,7 +68,7 @@ public class AuthorServiceImpl implements AuthorService {
         existingAuthor = existingAuthor.toBuilder()
                 .id(existingAuthor.getId())
                 .name(request.getName())
-                .isActive(true)
+                .isActive(existingAuthor.getIsActive())
                 .build();   
         authorRepository.save(existingAuthor);
 
