@@ -31,5 +31,7 @@ public class Publisher {
 
     @OneToMany(mappedBy = "publisher")
     private List<Book> book;
+
+    private Boolean isActive;
     
 }
