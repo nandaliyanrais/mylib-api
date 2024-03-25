@@ -1,6 +1,9 @@
 package com.nandaliyan.mylibapi.model.request;
 
+import java.util.List;
+
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import lombok.AllArgsConstructor;
@@ -23,8 +26,8 @@ public class BookRequest {
     @NotBlank(message = "Publisher is required.")
     private String publisher;
 
-    @NotBlank(message = "Genre is required.")
-    private String genre;
+    @NotEmpty(message = "At least one genre is required.")
+    private List<String> genres;
 
     @NotNull
     private Integer year;

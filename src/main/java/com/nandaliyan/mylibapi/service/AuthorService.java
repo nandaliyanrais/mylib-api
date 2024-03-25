@@ -8,11 +8,13 @@ import com.nandaliyan.mylibapi.model.response.AuthorResponse;
 
 public interface AuthorService {
     
-    Author create(Author author);
+    // Author create(Author author);
 
     Author getById(Long id);
 
-    Author getByName(String name);
+    // Author getByName(String name);
+
+    Author getOrCreateByName(String name);
 
     AuthorResponse createWithDto(AuthorRequest request);
 

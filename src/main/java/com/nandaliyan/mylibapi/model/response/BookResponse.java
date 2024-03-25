@@ -1,5 +1,7 @@
 package com.nandaliyan.mylibapi.model.response;
 
+import java.util.List;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -15,6 +17,7 @@ public class BookResponse {
     private String title;
     private BookAuthorResponse author;
     private BookPublisherResponse publisher;
+    private List<BookGenreResponse> genre;
     private Integer year;
     private String description;
     private Integer stock;

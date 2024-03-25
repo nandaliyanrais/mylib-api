@@ -1,6 +1,7 @@
 package com.nandaliyan.mylibapi.service.impl;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
@@ -19,19 +20,41 @@ public class GenreServiceImpl implements GenreService {
 
     private final GenreRepository genreRepository;
 
-    @Override
-    public Genre create(Genre genre) {
-        return genreRepository.save(genre);
-    }
+    // @Override
+    // public Genre create(Genre genre) {
+    //     return genreRepository.save(genre);
+    // }
 
     @Override
     public Genre getById(Long id) {
         return genreRepository.findById(id).orElseThrow(() -> new GenreNotFoundException());
     }
 
+    // @Override
+    // public Genre getByName(String name) {
+    //     return genreRepository.findByName(name).orElseThrow(() -> new GenreNotFoundException());
+    // }
+
     @Override
-    public Genre getByName(String name) {
-        return genreRepository.findByName(name).orElseThrow(() -> new GenreNotFoundException());
+    public Genre getOrCreateByName(String name) {
+        Optional<Genre> existingGenre = genreRepository.findByName(name);
+        
+        if (existingGenre.isPresent()) {
+            Genre genre = existingGenre.get();
+            if(!genre.getIsActive()) {
+                genre.setIsActive(true);
+                genreRepository.save(genre);
+            }
+
+            return genre;
+        } else {
+            Genre newGenre = Genre.builder()
+                    .name(name)
+                    .isActive(true)
+                    .build();
+                    
+            return genreRepository.save(newGenre);
+        }
     }
 
     @Override
