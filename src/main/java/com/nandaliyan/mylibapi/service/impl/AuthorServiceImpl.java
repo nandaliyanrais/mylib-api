@@ -1,6 +1,7 @@
 package com.nandaliyan.mylibapi.service.impl;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
@@ -19,19 +20,41 @@ public class AuthorServiceImpl implements AuthorService {
 
     private final AuthorRepository authorRepository;
 
-    @Override
-    public Author create(Author author) {
-        return authorRepository.save(author);
-    }
+    // @Override
+    // public Author create(Author author) {
+    //     return authorRepository.save(author);
+    // }
 
     @Override
     public Author getById(Long id) {
         return authorRepository.findById(id).orElseThrow(() -> new AuthorNotFoundException());
     }
 
+    // @Override
+    // public Author getByName(String name) {
+    //     return authorRepository.findByName(name).orElseThrow(() -> new AuthorNotFoundException());
+    // }
+
     @Override
-    public Author getByName(String name) {
-        return authorRepository.findByName(name).orElseThrow(() -> new AuthorNotFoundException());
+    public Author getOrCreateByName(String name) {
+        Optional<Author> existingAuthor = authorRepository.findByName(name);
+        
+        if (existingAuthor.isPresent()) {
+            Author author = existingAuthor.get();
+            if (!author.getIsActive()) {
+                author.setIsActive(true);
+                authorRepository.save(author);
+            }
+
+            return author;
+        } else {
+            Author newAuthor = Author.builder()
+                    .name(name)
+                    .isActive(true)
+                    .build();
+                    
+            return authorRepository.save(newAuthor);
+        }
     }
 
     @Override

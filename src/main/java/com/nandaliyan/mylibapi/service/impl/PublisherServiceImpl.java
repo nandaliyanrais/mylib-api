@@ -1,6 +1,7 @@
 package com.nandaliyan.mylibapi.service.impl;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
@@ -19,19 +20,41 @@ public class PublisherServiceImpl implements PublisherService {
 
     private final PublisherRepository publisherRepository;
 
-    @Override
-    public Publisher create(Publisher publisher) {
-        return publisherRepository.save(publisher);
-    }
+    // @Override
+    // public Publisher create(Publisher publisher) {
+    //     return publisherRepository.save(publisher);
+    // }
 
     @Override
     public Publisher getById(Long id) {
         return publisherRepository.findById(id).orElseThrow(() -> new PublisherNotFoundException());
     }
 
+    // @Override
+    // public Publisher getByName(String name) {
+    //     return publisherRepository.findByName(name).orElseThrow(() -> new PublisherNotFoundException());
+    // }
+
     @Override
-    public Publisher getByName(String name) {
-        return publisherRepository.findByName(name).orElseThrow(() -> new PublisherNotFoundException());
+    public Publisher getOrCreateByName(String name) {
+        Optional<Publisher> existingPublisher = publisherRepository.findByName(name);
+        
+        if (existingPublisher.isPresent()) {
+            Publisher publisher = existingPublisher.get();
+            if(!publisher.getIsActive()) {
+                publisher.setIsActive(true);
+                publisherRepository.save(publisher);
+            }
+            
+            return publisher;
+        } else {
+            Publisher newPublisher = Publisher.builder()
+                    .name(name)
+                    .isActive(true)
+                    .build();
+                    
+            return publisherRepository.save(newPublisher);
+        }
     }
 
     @Override
