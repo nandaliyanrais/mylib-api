@@ -3,6 +3,7 @@ package com.nandaliyan.mylibapi.model.entity;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -32,8 +33,10 @@ public class Member {
 
     private String name;
 
+    @Column(unique = true)
     private String email;
 
+    @Column(unique = true)
     private String phone;
 
     private String address;
@@ -46,5 +49,7 @@ public class Member {
 
     @OneToMany(mappedBy = "member")
     private List<BorrowingRecord> borrowingRecord;
+
+    private Boolean isActive;
     
 }
