@@ -2,6 +2,8 @@ package com.nandaliyan.mylibapi.model.entity;
 
 import java.time.LocalDateTime;
 
+import com.nandaliyan.mylibapi.constant.DbTableSchema;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -15,7 +17,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name = "t_borrowing_record")
+@Table(name = DbTableSchema.BORROWING_RECORD_SCHEMA)
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter

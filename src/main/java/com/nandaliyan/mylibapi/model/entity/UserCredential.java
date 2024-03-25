@@ -1,5 +1,7 @@
 package com.nandaliyan.mylibapi.model.entity;
 
+import com.nandaliyan.mylibapi.constant.DbTableSchema;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -15,7 +17,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name = "m_user_credential")
+@Table(name = DbTableSchema.USER_CREDENTIAL_SCHEMA)
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter

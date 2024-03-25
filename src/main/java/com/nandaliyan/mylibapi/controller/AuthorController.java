@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.nandaliyan.mylibapi.constant.AppPath;
 import com.nandaliyan.mylibapi.model.request.AuthorRequest;
 import com.nandaliyan.mylibapi.model.response.AuthorResponse;
 import com.nandaliyan.mylibapi.model.response.CommonResponse;
@@ -23,7 +24,7 @@ import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/authors")
+@RequestMapping(AppPath.AUTHOR_PATH)
 public class AuthorController {
     
     private final AuthorService authorService;
@@ -52,7 +53,7 @@ public class AuthorController {
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
-    @GetMapping("/{id}")
+    @GetMapping(AppPath.GET_BY_ID)
     public ResponseEntity<?> getAuthorById(@PathVariable Long id) {
         AuthorResponse authorResponse = authorService.getByIdWithDto(id);
         CommonResponse<AuthorResponse> response = CommonResponse.<AuthorResponse>builder()
@@ -64,7 +65,7 @@ public class AuthorController {
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
-    @PutMapping("/{id}")
+    @PutMapping(AppPath.UPDATE_BY_ID)
     public ResponseEntity<?> updateAuthorById(@PathVariable Long id, @Valid @RequestBody AuthorRequest request) {
         AuthorResponse authorResponse = authorService.updateWithDto(id, request);
         CommonResponse<AuthorResponse> response = CommonResponse.<AuthorResponse>builder()
@@ -76,7 +77,7 @@ public class AuthorController {
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping(AppPath.DELETE_BY_ID)
     public ResponseEntity<?> deleteAuthorById(@PathVariable Long id) {
         authorService.deleteById(id);
         CommonResponse<AuthorResponse> response = CommonResponse.<AuthorResponse>builder()

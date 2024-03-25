@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.nandaliyan.mylibapi.constant.AppPath;
 import com.nandaliyan.mylibapi.model.request.GenreRequest;
 import com.nandaliyan.mylibapi.model.response.CommonResponse;
 import com.nandaliyan.mylibapi.model.response.GenreResponse;
@@ -23,7 +24,7 @@ import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/genres")
+@RequestMapping(AppPath.GENRE_PATH)
 public class GenreController {
     
     private final GenreService genreService;
@@ -52,7 +53,7 @@ public class GenreController {
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
-    @GetMapping("/{id}")
+    @GetMapping(AppPath.GET_BY_ID)
     public ResponseEntity<?> getGenreById(@PathVariable Long id) {
         GenreResponse genreResponse = genreService.getByIdWithDto(id);
         CommonResponse<GenreResponse> response = CommonResponse.<GenreResponse>builder()
@@ -64,7 +65,7 @@ public class GenreController {
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
-    @PutMapping("/{id}")
+    @PutMapping(AppPath.UPDATE_BY_ID)
     public ResponseEntity<?> updateGenreById(@PathVariable Long id, @Valid @RequestBody GenreRequest request) {
         GenreResponse genreResponse = genreService.updateWithDto(id, request);
         CommonResponse<GenreResponse> response = CommonResponse.<GenreResponse>builder()
@@ -76,7 +77,7 @@ public class GenreController {
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping(AppPath.DELETE_BY_ID)
     public ResponseEntity<?> deleteGenreById(@PathVariable Long id) {
         genreService.deleteById(id);
         CommonResponse<GenreResponse> response = CommonResponse.<GenreResponse>builder()

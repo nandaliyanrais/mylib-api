@@ -8,11 +8,7 @@ import com.nandaliyan.mylibapi.model.response.GenreResponse;
 
 public interface GenreService {
     
-    // Genre create(Genre genre);
-
     Genre getById(Long id);
-
-    // Genre getByName(String name);
 
     Genre getOrCreateByName(String name);
 
