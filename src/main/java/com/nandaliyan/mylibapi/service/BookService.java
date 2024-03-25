@@ -7,6 +7,8 @@ import com.nandaliyan.mylibapi.model.request.BookRequest;
 import com.nandaliyan.mylibapi.model.response.BookResponse;
 
 public interface BookService {
+
+    String generateBookCode(String author, String title);
     
     Book create(Book book);
     
