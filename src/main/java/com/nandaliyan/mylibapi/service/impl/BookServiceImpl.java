@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
+import com.nandaliyan.mylibapi.exception.BookNotAvailableException;
 import com.nandaliyan.mylibapi.exception.BookNotFoundException;
 import com.nandaliyan.mylibapi.model.entity.Author;
 import com.nandaliyan.mylibapi.model.entity.Book;
@@ -127,25 +128,37 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public void borrowBook(String bookCode) {
+    public void checkBookAvailability(String bookCode) {
         Book book = getByBookCode(bookCode);
 
-        if (isBookAvailable(bookCode)) {
-            int currentStock = book.getStock();
-            if (currentStock > 1) {
-                book.setStock(currentStock - 1);
-                bookRepository.save(book);
-            } else if (currentStock == 1) {
-                book.setStock(0);
-                book.setIsAvailable(false);
-                bookRepository.save(book);
-            }
+        if (!book.getIsAvailable()) {
+            throw new BookNotAvailableException();
+        }
+    }
+
+    @Override
+    public void borrowBook(String bookCode) {
+        Book book = getByBookCode(bookCode);
+        int currentStock = book.getStock();
+
+        if (currentStock > 1) {
+            book.setStock(currentStock - 1);
+            bookRepository.save(book);
+        } else if (currentStock == 1) {
+            book.setStock(0);
+            book.setIsAvailable(false);
+            bookRepository.save(book);
         }
     }
 
     @Override
     public void returnBook(String bookCode) {
         Book book = getByBookCode(bookCode);
+
+        if (!book.getIsAvailable()) {
+            book.setIsAvailable(true);
+        }
+
         book.setStock(book.getStock() + 1);
         bookRepository.save(book);        
     }
@@ -232,12 +245,6 @@ public class BookServiceImpl implements BookService {
                 .stock(book.getStock())
                 .isAvailable(book.getIsAvailable())
                 .build();
-    }
-
-    private boolean isBookAvailable(String bookCode) {
-        Book book = getByBookCode(bookCode);
-
-        return book.getIsAvailable() && book.getStock() > 0;
     }
 
 }

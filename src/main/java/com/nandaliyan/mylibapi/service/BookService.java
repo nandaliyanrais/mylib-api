@@ -24,6 +24,8 @@ public interface BookService {
     
     void deleteById(Long id);
 
+    void checkBookAvailability(String bookCode);
+
     void borrowBook(String bookCode);
 
     void returnBook(String bookCode);

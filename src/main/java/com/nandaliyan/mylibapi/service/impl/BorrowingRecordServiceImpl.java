@@ -48,6 +48,8 @@ public class BorrowingRecordServiceImpl implements BorrowingRecordService {
         Member member = memberService.getByEmail(getEmailMember);
         Book book = bookService.getByBookCode(request.getBookCode());
 
+        bookService.checkBookAvailability(request.getBookCode());
+
         BorrowingRecord borrowingRecord = BorrowingRecord.builder()
                 .id(generateId(request.getBookCode()))
                 .member(member)
@@ -69,7 +71,7 @@ public class BorrowingRecordServiceImpl implements BorrowingRecordService {
         BorrowingRecord borrowingRecord = getById(request.getBorrowId());
 
         LocalDateTime borrowedAt = borrowingRecord.getBorrowedAt();
-        LocalDateTime returnedAt = LocalDateTime.now().plusDays(14);
+        LocalDateTime returnedAt = LocalDateTime.now();
 
         long daysDifference = ChronoUnit.DAYS.between(borrowedAt, returnedAt);
 
