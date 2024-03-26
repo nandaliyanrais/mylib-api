@@ -7,14 +7,12 @@ import com.nandaliyan.mylibapi.model.request.BookRequest;
 import com.nandaliyan.mylibapi.model.response.BookResponse;
 
 public interface BookService {
-
-    String generateBookCode(String author, String title);
-    
-    Book create(Book book);
     
     Book getById(Long id);
     
     Book getByTitle(String title);
+
+    Book getByBookCode(String bookCode);
     
     BookResponse createWithDto(BookRequest request);
     
@@ -26,8 +24,8 @@ public interface BookService {
     
     void deleteById(Long id);
 
-    boolean isBookAvailable(Long id);
+    void borrowBook(String bookCode);
 
-    void decreaseStock(Long id, int quantity);
-    
+    void returnBook(String bookCode);
+
 }

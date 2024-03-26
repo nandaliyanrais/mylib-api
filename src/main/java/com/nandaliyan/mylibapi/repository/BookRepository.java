@@ -13,5 +13,8 @@ public interface BookRepository extends JpaRepository<Book, Long> {
 
     @Query(value = "SELECT * FROM m_book WHERE title = ?1", nativeQuery = true)
     Optional<Book> findByTitle(String title);
+
+    @Query(value = "SELECT * FROM m_book WHERE book_code = ?1", nativeQuery = true)
+    Optional<Book> findByBookCode(String bookCode);
     
 }
