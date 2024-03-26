@@ -36,20 +36,6 @@ public class BookServiceImpl implements BookService {
     private final GenreService genreService;
 
     @Override
-    public String generateBookCode(String author, String title) {
-        String randomDigits = getRandomNumber();
-        String lastNameInitial = getLastNameInitial(author);
-        String titleInitial = getTitleInitial(title);
-        
-        return randomDigits + lastNameInitial + titleInitial;
-    }
-
-    @Override
-    public Book create(Book book) {
-        return bookRepository.save(book);
-    }
-
-    @Override
     public Book getById(Long id) {
         return bookRepository.findById(id).orElseThrow(() -> new BookNotFoundException());
     }
@@ -57,6 +43,11 @@ public class BookServiceImpl implements BookService {
     @Override
     public Book getByTitle(String title) {
         return bookRepository.findByTitle(title).orElseThrow(() -> new BookNotFoundException());
+    }
+
+    @Override
+    public Book getByBookCode(String bookCode) {
+        return bookRepository.findByBookCode(bookCode).orElseThrow(() -> new BookNotFoundException());
     }
 
     @Override
@@ -137,27 +128,47 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public boolean isBookAvailable(Long id) {
-        Book book = getById(id);
+    public void checkBookAvailability(String bookCode) {
+        Book book = getByBookCode(bookCode);
 
-        return book.getIsAvailable() && book.getStock() > 0;
+        if (!book.getIsAvailable()) {
+            throw new BookNotAvailableException();
+        }
     }
 
     @Override
-    public void decreaseStock(Long id, int quantity) {
-        Book book = getById(id);
+    public void borrowBook(String bookCode) {
+        Book book = getByBookCode(bookCode);
+        int currentStock = book.getStock();
 
-        if (isBookAvailable(id)) {
-            int updatedStock = book.getStock() - quantity;
-            book.setStock(updatedStock);
-
-            if (updatedStock == 0) {
-                book.setIsAvailable(false);
-            }
+        if (currentStock > 1) {
+            book.setStock(currentStock - 1);
             bookRepository.save(book);
-        } else {
-            throw new BookNotAvailableException();
+        } else if (currentStock == 1) {
+            book.setStock(0);
+            book.setIsAvailable(false);
+            bookRepository.save(book);
         }
+    }
+
+    @Override
+    public void returnBook(String bookCode) {
+        Book book = getByBookCode(bookCode);
+
+        if (!book.getIsAvailable()) {
+            book.setIsAvailable(true);
+        }
+
+        book.setStock(book.getStock() + 1);
+        bookRepository.save(book);        
+    }
+
+    private String generateBookCode(String author, String title) {
+        String randomDigits = getRandomNumber();
+        String lastNameInitial = getLastNameInitial(author);
+        String titleInitial = getTitleInitial(title);
+        
+        return randomDigits + lastNameInitial + titleInitial;
     }
 
     private String getRandomNumber() {

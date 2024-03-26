@@ -8,9 +8,12 @@ public class AppPath {
     public final static String GENRE_PATH = "/genres";
     public final static String AUTHOR_PATH = "/authors";
     public final static String PUBLISHER_PATH = "/publishers";
+    public final static String BORROWING_RECORD_PATH = "/borrowing-records";
 
     public final static String REGISTER_PATH = "/register";
     public final static String LOGIN_PATH = "/login";
+    public final static String BORROW_PATH = "/borrow";
+    public final static String RETURN_PATH = "/return";
 
     public final static String GET_BY_ID = "/{id}";
     public final static String UPDATE_BY_ID = "/{id}";

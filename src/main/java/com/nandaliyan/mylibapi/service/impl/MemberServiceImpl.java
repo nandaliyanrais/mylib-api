@@ -44,6 +44,11 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
+    public Member getByEmail(String email) {
+        return memberRepository.findByEmail(email).orElseThrow(() -> new MemberNotFoundException());
+    }
+
+    @Override
     public List<MemberResponse> getAllWithDto() {
         List<Member> members = memberRepository.findAll();
 
