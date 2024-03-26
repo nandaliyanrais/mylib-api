@@ -20,20 +20,10 @@ public class PublisherServiceImpl implements PublisherService {
 
     private final PublisherRepository publisherRepository;
 
-    // @Override
-    // public Publisher create(Publisher publisher) {
-    //     return publisherRepository.save(publisher);
-    // }
-
     @Override
     public Publisher getById(Long id) {
         return publisherRepository.findById(id).orElseThrow(() -> new PublisherNotFoundException());
     }
-
-    // @Override
-    // public Publisher getByName(String name) {
-    //     return publisherRepository.findByName(name).orElseThrow(() -> new PublisherNotFoundException());
-    // }
 
     @Override
     public Publisher getOrCreateByName(String name) {

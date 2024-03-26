@@ -3,6 +3,8 @@ package com.nandaliyan.mylibapi.model.entity;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.nandaliyan.mylibapi.constant.DbTableSchema;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -20,7 +22,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name = "m_book")
+@Table(name = DbTableSchema.BOOK_SCHEMA)
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
@@ -46,7 +48,7 @@ public class Book {
 
     @ManyToMany
     @JoinTable(
-        name = "t_book_genre",
+        name = DbTableSchema.BOOK_GENRE_SCHEMA,
         joinColumns = @JoinColumn(name = "book_id"),
         inverseJoinColumns = @JoinColumn(name = "genre_id")
     )

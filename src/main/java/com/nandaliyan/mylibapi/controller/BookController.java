@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.nandaliyan.mylibapi.constant.AppPath;
 import com.nandaliyan.mylibapi.model.request.BookRequest;
 import com.nandaliyan.mylibapi.model.response.BookResponse;
 import com.nandaliyan.mylibapi.model.response.CommonResponse;
@@ -23,7 +24,7 @@ import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/books")
+@RequestMapping(AppPath.BOOK_PATH)
 public class BookController {
 
     private final BookService bookService;
@@ -52,7 +53,7 @@ public class BookController {
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
-    @GetMapping("/{id}")
+    @GetMapping(AppPath.GET_BY_ID)
     public ResponseEntity<?> getBookById(@PathVariable Long id) {
         BookResponse bookResponse = bookService.getByIdWithDto(id);
         CommonResponse<BookResponse> response = CommonResponse.<BookResponse>builder()
@@ -64,7 +65,7 @@ public class BookController {
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
-    @PutMapping("/{id}")
+    @PutMapping(AppPath.UPDATE_BY_ID)
     public ResponseEntity<?> updateBookById(@PathVariable Long id, @Valid @RequestBody BookRequest request) {
         BookResponse bookResponse = bookService.updateWithDto(id, request);
         CommonResponse<BookResponse> response = CommonResponse.<BookResponse>builder()
@@ -76,7 +77,7 @@ public class BookController {
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping(AppPath.DELETE_BY_ID)
     public ResponseEntity<?> deleteBookById(@PathVariable Long id) {
         bookService.deleteById(id);
         CommonResponse<BookResponse> response = CommonResponse.<BookResponse>builder()

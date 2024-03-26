@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.nandaliyan.mylibapi.constant.AppPath;
 import com.nandaliyan.mylibapi.model.request.PublisherRequest;
 import com.nandaliyan.mylibapi.model.response.CommonResponse;
 import com.nandaliyan.mylibapi.model.response.PublisherResponse;
@@ -23,7 +24,7 @@ import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/publishers")
+@RequestMapping(AppPath.PUBLISHER_PATH)
 public class PublisherController {
 
     private final PublisherService publisherService;
@@ -52,7 +53,7 @@ public class PublisherController {
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
-    @GetMapping("/{id}")
+    @GetMapping(AppPath.GET_BY_ID)
     public ResponseEntity<?> getPublisherById(@PathVariable Long id) {
         PublisherResponse publisherResponse = publisherService.getByIdWithDto(id);
         CommonResponse<PublisherResponse> response = CommonResponse.<PublisherResponse>builder()
@@ -64,7 +65,7 @@ public class PublisherController {
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
-    @PutMapping("/{id}")
+    @PutMapping(AppPath.UPDATE_BY_ID)
     public ResponseEntity<?> updatePublisherById(@PathVariable Long id, @Valid @RequestBody PublisherRequest request) {
         PublisherResponse publisherResponse = publisherService.updateWithDto(id, request);
         CommonResponse<PublisherResponse> response = CommonResponse.<PublisherResponse>builder()
@@ -76,7 +77,7 @@ public class PublisherController {
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping(AppPath.DELETE_BY_ID)
     public ResponseEntity<?> deletePublisherById(@PathVariable Long id) {
         publisherService.deleteById(id);
         CommonResponse<PublisherResponse> response = CommonResponse.<PublisherResponse>builder()

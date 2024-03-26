@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.nandaliyan.mylibapi.constant.AppPath;
 import com.nandaliyan.mylibapi.model.request.MemberUpdateRequest;
 import com.nandaliyan.mylibapi.model.response.CommonResponse;
 import com.nandaliyan.mylibapi.model.response.MemberResponse;
@@ -22,7 +23,7 @@ import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/members")
+@RequestMapping(AppPath.MEMBER_PATH)
 public class MemberController {
     
     private final MemberService memberService;
@@ -39,7 +40,7 @@ public class MemberController {
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
-    @GetMapping("/{id}")
+    @GetMapping(AppPath.GET_BY_ID)
     public ResponseEntity<?> getMemberById(@PathVariable String id) {
         MemberResponse memberResponse = memberService.getByIdWithDto(id);
         CommonResponse<MemberResponse> response = CommonResponse.<MemberResponse>builder()
@@ -51,7 +52,7 @@ public class MemberController {
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
-    @PutMapping("/{id}")
+    @PutMapping(AppPath.UPDATE_BY_ID)
     public ResponseEntity<?> updateMemberById(@PathVariable String id, @Valid @RequestBody MemberUpdateRequest request) {
         MemberResponse memberResponse = memberService.updateWithDto(id, request);
         CommonResponse<MemberResponse> response = CommonResponse.<MemberResponse>builder()
@@ -63,7 +64,7 @@ public class MemberController {
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping(AppPath.DELETE_BY_ID)
     public ResponseEntity<?> deleteMemberById(@PathVariable String id) {
         memberService.deleteById(id);
         CommonResponse<MemberResponse> response = CommonResponse.<MemberResponse>builder()

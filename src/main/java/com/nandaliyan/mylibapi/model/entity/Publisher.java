@@ -2,6 +2,8 @@ package com.nandaliyan.mylibapi.model.entity;
 
 import java.util.List;
 
+import com.nandaliyan.mylibapi.constant.DbTableSchema;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -16,7 +18,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name = "m_publisher")
+@Table(name = DbTableSchema.PUBLISHER_SCHEMA)
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter

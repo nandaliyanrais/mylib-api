@@ -14,6 +14,8 @@ public interface MemberService {
 
     Member getById(String id);
 
+    Member getByEmail(String email);
+
     List<MemberResponse> getAllWithDto();
 
     MemberResponse getByIdWithDto(String id);

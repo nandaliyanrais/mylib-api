@@ -2,9 +2,10 @@ package com.nandaliyan.mylibapi.model.entity;
 
 import java.time.LocalDateTime;
 
+import com.nandaliyan.mylibapi.constant.DbTableSchema;
+
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
@@ -15,7 +16,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name = "t_borrowing_record")
+@Table(name = DbTableSchema.BORROWING_RECORD_SCHEMA)
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
@@ -24,8 +25,8 @@ import lombok.Setter;
 public class BorrowingRecord {
     
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @Column(unique = true)
+    private String id;
 
     @ManyToOne
     private Member member;
@@ -34,7 +35,11 @@ public class BorrowingRecord {
     private Book book;
 
     private LocalDateTime borrowedAt;
-
+    
     private LocalDateTime returnedAt;
+    
+    private String returnedBy;
+
+    private Long fineAmount;
 
 }

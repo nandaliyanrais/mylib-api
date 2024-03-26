@@ -20,20 +20,10 @@ public class AuthorServiceImpl implements AuthorService {
 
     private final AuthorRepository authorRepository;
 
-    // @Override
-    // public Author create(Author author) {
-    //     return authorRepository.save(author);
-    // }
-
     @Override
     public Author getById(Long id) {
         return authorRepository.findById(id).orElseThrow(() -> new AuthorNotFoundException());
     }
-
-    // @Override
-    // public Author getByName(String name) {
-    //     return authorRepository.findByName(name).orElseThrow(() -> new AuthorNotFoundException());
-    // }
 
     @Override
     public Author getOrCreateByName(String name) {

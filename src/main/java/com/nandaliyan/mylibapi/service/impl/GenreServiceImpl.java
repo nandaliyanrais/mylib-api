@@ -20,20 +20,10 @@ public class GenreServiceImpl implements GenreService {
 
     private final GenreRepository genreRepository;
 
-    // @Override
-    // public Genre create(Genre genre) {
-    //     return genreRepository.save(genre);
-    // }
-
     @Override
     public Genre getById(Long id) {
         return genreRepository.findById(id).orElseThrow(() -> new GenreNotFoundException());
     }
-
-    // @Override
-    // public Genre getByName(String name) {
-    //     return genreRepository.findByName(name).orElseThrow(() -> new GenreNotFoundException());
-    // }
 
     @Override
     public Genre getOrCreateByName(String name) {

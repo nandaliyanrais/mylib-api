@@ -1,5 +1,6 @@
 package com.nandaliyan.mylibapi.model.entity;
 
+import com.nandaliyan.mylibapi.constant.DbTableSchema;
 import com.nandaliyan.mylibapi.constant.ERole;
 
 import jakarta.persistence.Entity;
@@ -16,7 +17,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name = "m_role")
+@Table(name = DbTableSchema.ROLE_SCHEMA)
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter

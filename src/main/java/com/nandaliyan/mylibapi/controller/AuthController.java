@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.nandaliyan.mylibapi.constant.AppPath;
 import com.nandaliyan.mylibapi.model.request.LoginRequest;
 import com.nandaliyan.mylibapi.model.request.RegisterRequest;
 import com.nandaliyan.mylibapi.model.response.CommonResponse;
@@ -22,7 +23,7 @@ public class AuthController {
 
     private final AuthService authService;
 
-    @PostMapping("/admin/register")
+    @PostMapping(AppPath.REGISTER_ADMIN_PATH)
     public ResponseEntity<?> registerAdmin(@Valid @RequestBody RegisterRequest request) {
         RegisterResponse registerResponse = authService.registerAdmin(request);
         CommonResponse<RegisterResponse> response = CommonResponse.<RegisterResponse>builder()
@@ -34,7 +35,7 @@ public class AuthController {
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
-    @PostMapping("/register")
+    @PostMapping(AppPath.REGISTER_PATH)
     public ResponseEntity<?> registerMember(@Valid @RequestBody RegisterRequest request) {
         RegisterResponse registerResponse = authService.registerMember(request);
         CommonResponse<RegisterResponse> response = CommonResponse.<RegisterResponse>builder()
@@ -46,7 +47,7 @@ public class AuthController {
         return ResponseEntity.status(HttpStatus.CREATED).body(response);        
     }
 
-    @PostMapping("/login")
+    @PostMapping(AppPath.LOGIN_PATH)
     public ResponseEntity<?> login(@Valid @RequestBody LoginRequest request) {
         LoginResponse loginResponse = authService.login(request);
         CommonResponse<LoginResponse> response = CommonResponse.<LoginResponse>builder()
