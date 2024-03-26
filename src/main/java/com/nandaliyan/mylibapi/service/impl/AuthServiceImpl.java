@@ -63,6 +63,7 @@ public class AuthServiceImpl implements AuthService {
                     .phone(request.getPhone())
                     .createdAt(LocalDateTime.now())
                     .updatedAt(LocalDateTime.now())
+                    .userCredential(userCredential)
                     .build();
             adminService.create(admin);
 
@@ -97,6 +98,7 @@ public class AuthServiceImpl implements AuthService {
                     .createdAt(LocalDateTime.now())
                     .expiredAt(LocalDateTime.now().plusYears(5))
                     .updatedAt(LocalDateTime.now())
+                    .userCredential(userCredential)
                     .isActive(true)
                     .build();
             memberService.create(member);

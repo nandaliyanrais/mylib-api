@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -30,6 +31,7 @@ public class GenreController {
     private final GenreService genreService;
 
     @PostMapping
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<?> createGenre(@Valid @RequestBody GenreRequest request) {
         GenreResponse genreResponse = genreService.createWithDto(request);
         CommonResponse<GenreResponse> response = CommonResponse.<GenreResponse>builder()
@@ -42,6 +44,7 @@ public class GenreController {
     }
 
     @GetMapping
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<?> getAllGenres() {
         List<GenreResponse> genreResponses = genreService.getAllWithDto();
         CommonResponse<List<GenreResponse>> response = CommonResponse.<List<GenreResponse>>builder()
@@ -54,6 +57,7 @@ public class GenreController {
     }
 
     @GetMapping(AppPath.GET_BY_ID)
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<?> getGenreById(@PathVariable Long id) {
         GenreResponse genreResponse = genreService.getByIdWithDto(id);
         CommonResponse<GenreResponse> response = CommonResponse.<GenreResponse>builder()
@@ -66,6 +70,7 @@ public class GenreController {
     }
 
     @PutMapping(AppPath.UPDATE_BY_ID)
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<?> updateGenreById(@PathVariable Long id, @Valid @RequestBody GenreRequest request) {
         GenreResponse genreResponse = genreService.updateWithDto(id, request);
         CommonResponse<GenreResponse> response = CommonResponse.<GenreResponse>builder()
@@ -78,6 +83,7 @@ public class GenreController {
     }
 
     @DeleteMapping(AppPath.DELETE_BY_ID)
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<?> deleteGenreById(@PathVariable Long id) {
         genreService.deleteById(id);
         CommonResponse<GenreResponse> response = CommonResponse.<GenreResponse>builder()
