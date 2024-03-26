@@ -9,6 +9,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -33,6 +34,12 @@ public class UserCredential {
     private String email;
 
     private String password;
+
+    @OneToOne(mappedBy = "userCredential")
+    private Admin admin;
+
+    @OneToOne(mappedBy = "userCredential")
+    private Member member;
 
     @ManyToOne
     @JoinColumn(name = "role_id", referencedColumnName = "id")

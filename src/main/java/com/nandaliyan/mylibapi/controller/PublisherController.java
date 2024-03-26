@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -30,6 +31,7 @@ public class PublisherController {
     private final PublisherService publisherService;
 
     @PostMapping
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<?> createPublisher(@Valid @RequestBody PublisherRequest request) {
         PublisherResponse publisherResponse = publisherService.createWithDto(request);
         CommonResponse<PublisherResponse> response = CommonResponse.<PublisherResponse>builder()
@@ -42,6 +44,7 @@ public class PublisherController {
     }
 
     @GetMapping
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<?> getAllPublishers() {
         List<PublisherResponse> publisherResponses = publisherService.getAllWithDto();
         CommonResponse<List<PublisherResponse>> response = CommonResponse.<List<PublisherResponse>>builder()
@@ -54,6 +57,7 @@ public class PublisherController {
     }
 
     @GetMapping(AppPath.GET_BY_ID)
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<?> getPublisherById(@PathVariable Long id) {
         PublisherResponse publisherResponse = publisherService.getByIdWithDto(id);
         CommonResponse<PublisherResponse> response = CommonResponse.<PublisherResponse>builder()
@@ -66,6 +70,7 @@ public class PublisherController {
     }
 
     @PutMapping(AppPath.UPDATE_BY_ID)
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<?> updatePublisherById(@PathVariable Long id, @Valid @RequestBody PublisherRequest request) {
         PublisherResponse publisherResponse = publisherService.updateWithDto(id, request);
         CommonResponse<PublisherResponse> response = CommonResponse.<PublisherResponse>builder()
@@ -78,6 +83,7 @@ public class PublisherController {
     }
 
     @DeleteMapping(AppPath.DELETE_BY_ID)
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<?> deletePublisherById(@PathVariable Long id) {
         publisherService.deleteById(id);
         CommonResponse<PublisherResponse> response = CommonResponse.<PublisherResponse>builder()

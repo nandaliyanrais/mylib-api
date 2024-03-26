@@ -2,6 +2,7 @@ package com.nandaliyan.mylibapi.controller;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -24,6 +25,7 @@ public class BorrowController {
     private final BorrowingRecordService borrowingRecordService;
 
     @PostMapping(AppPath.BORROW_PATH)
+    @PreAuthorize("hasAnyRole('ROLE_MEMBER', 'ROLE_ADMIN')")
     public ResponseEntity<?> borrowBook(@RequestBody BorrowRequest request, Authentication authentication) {
         BorrowResponse borrowResponse = borrowingRecordService.borrowBook(request, authentication);
         CommonResponse<BorrowResponse> response = CommonResponse.<BorrowResponse>builder()
@@ -36,6 +38,7 @@ public class BorrowController {
     }
 
     @PostMapping(AppPath.RETURN_PATH)
+    @PreAuthorize("hasAnyRole('ROLE_MEMBER', 'ROLE_ADMIN')")
     public ResponseEntity<?> returnBook(@RequestBody ReturnRequest request, Authentication authentication) {
         ReturnResponse returnResponse = borrowingRecordService.returnBook(request, authentication);
         CommonResponse<ReturnResponse> response = CommonResponse.<ReturnResponse>builder()
