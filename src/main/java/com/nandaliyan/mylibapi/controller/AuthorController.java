@@ -80,12 +80,23 @@ public class AuthorController {
 
     @GetMapping(AppPath.GET_BY_URL_NAME)
     @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_MEMBER')")
-    public ResponseEntity<?> getAuthorByName(@PathVariable String urlName) {
-        AuthorWithListBookResponse authorWithListBookResponse = authorService.getListBookByUrlName(urlName);
-        CommonResponse<AuthorWithListBookResponse> response = CommonResponse.<AuthorWithListBookResponse>builder()
+    public ResponseEntity<?> getAuthorByName(@PathVariable String urlName, 
+            @RequestParam(defaultValue = "0") Integer page, 
+            @RequestParam(defaultValue = "5") Integer size) {
+        AuthorWithListBookResponse authorWithListBookResponse = authorService.getListBookByUrlName(urlName, page, size);
+        int totalPage = (int) Math.ceil((double) authorWithListBookResponse.getTotalBooks() / size);
+
+        PagingResponse pagingResponse = PagingResponse.builder()
+                .currentPage(page)
+                .totalPage(totalPage)
+                .size(size)
+                .build();
+
+        CommonResponseWithPage<AuthorWithListBookResponse> response = CommonResponseWithPage.<AuthorWithListBookResponse>builder()
                 .statusCode(HttpStatus.OK.value())
                 .message("Author retrieved successfully.")
                 .data(authorWithListBookResponse)
+                .paging(pagingResponse)
                 .build();
 
         return ResponseEntity.status(HttpStatus.OK).body(response);

@@ -80,12 +80,23 @@ public class PublisherController {
 
     @GetMapping(AppPath.GET_BY_URL_NAME)
     @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_MEMBER')")
-    public ResponseEntity<?> getPublisherByName(@PathVariable String urlName) {
-        PublisherWithListBookResponse publisherWithListBookResponse = publisherService.getListBookByUrlName(urlName);
-        CommonResponse<PublisherWithListBookResponse> response = CommonResponse.<PublisherWithListBookResponse>builder()
+    public ResponseEntity<?> getPublisherByName(@PathVariable String urlName,
+            @RequestParam(defaultValue = "0") Integer page, 
+            @RequestParam(defaultValue = "5") Integer size) {
+        PublisherWithListBookResponse publisherWithListBookResponse = publisherService.getListBookByUrlName(urlName, page, size);
+        int totalPage = (int) Math.ceil((double) publisherWithListBookResponse.getTotalBooks() / size);
+        
+        PagingResponse pagingResponse = PagingResponse.builder()
+                .currentPage(page)
+                .totalPage(totalPage)
+                .size(size)
+                .build();
+        
+        CommonResponseWithPage<PublisherWithListBookResponse> response = CommonResponseWithPage.<PublisherWithListBookResponse>builder()
                 .statusCode(HttpStatus.OK.value())
                 .message("Publisher retrieved successfully.")
                 .data(publisherWithListBookResponse)
+                .paging(pagingResponse)
                 .build();
         
         return ResponseEntity.status(HttpStatus.OK).body(response);

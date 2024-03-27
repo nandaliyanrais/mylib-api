@@ -11,5 +11,6 @@ public class PublisherWithListBookResponse {
 
     private String name;
     private List<ListBookResponse> book;
+    private Integer totalBooks;
     
 }

@@ -23,7 +23,7 @@ public interface PublisherService {
 
     Page<PublisherResponse> getAllWithDto(Integer page, Integer size);
 
-    PublisherWithListBookResponse getListBookByUrlName(String urlName);
+    PublisherWithListBookResponse getListBookByUrlName(String urlName, int page, int size);
 
     PublisherResponse updateWithDto(Long id, PublisherRequest request);
 

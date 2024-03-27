@@ -11,5 +11,6 @@ public class GenreWithListBookResponse {
 
     private String name;
     private List<ListBookResponse> book;
+    private Integer totalBooks;
     
 }

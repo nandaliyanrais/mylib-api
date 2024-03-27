@@ -23,7 +23,7 @@ public interface GenreService {
 
     GenreResponse getByIdWithDto(Long id);
 
-    GenreWithListBookResponse getListBookByUrlName(String urlName);
+    GenreWithListBookResponse getListBookByUrlName(String urlName, int page, int size);
 
     GenreResponse updateWithDto(Long id, GenreRequest request);
 

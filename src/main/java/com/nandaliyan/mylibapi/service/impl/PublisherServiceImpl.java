@@ -2,12 +2,15 @@ package com.nandaliyan.mylibapi.service.impl;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import com.nandaliyan.mylibapi.exception.PublisherNotFoundException;
+import com.nandaliyan.mylibapi.model.entity.Book;
 import com.nandaliyan.mylibapi.model.entity.Publisher;
 import com.nandaliyan.mylibapi.model.request.PublisherRequest;
 import com.nandaliyan.mylibapi.model.response.ListBookResponse;
@@ -90,10 +93,10 @@ public class PublisherServiceImpl implements PublisherService {
     }
 
     @Override
-    public PublisherWithListBookResponse getListBookByUrlName(String urlName) {
+    public PublisherWithListBookResponse getListBookByUrlName(String urlName, int page, int size) {
         Publisher publisher = getByUrlName(urlName);
 
-        return convertToListBookResponse(publisher);
+        return convertToListBookResponse(publisher, page, size);
     }
 
     @Override
@@ -126,17 +129,29 @@ public class PublisherServiceImpl implements PublisherService {
                 .build();
     }
     
-    private PublisherWithListBookResponse convertToListBookResponse(Publisher publisher) {
-        List<ListBookResponse> listBookResponses = publisher.getBook().stream()
+    private PublisherWithListBookResponse convertToListBookResponse(Publisher publisher, int page, int size) {
+        List<Book> filteredBooks = publisher.getBook().stream()
+                .filter(Book::getIsAvailable)
+                .collect(Collectors.toList());
+
+        int startIndex = page * size;
+        int endIndex = Math.min(startIndex + size, filteredBooks.size());
+
+        Page<Book> bookPage = new PageImpl<>(filteredBooks.subList(startIndex, endIndex), PageRequest.of(page, size), filteredBooks.size());
+
+        List<ListBookResponse> listBookResponses = bookPage.getContent().stream()
                 .map(book -> ListBookResponse.builder()
                         .title(book.getTitle())
                         .year(book.getYear())
                         .build())
                 .toList();
 
+        Integer totalBooks = filteredBooks.size();
+
         return PublisherWithListBookResponse.builder()
                 .name(publisher.getName())
                 .book(listBookResponses)
+                .totalBooks(totalBooks)
                 .build();
     }
     

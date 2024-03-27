@@ -80,12 +80,23 @@ public class GenreController {
 
     @GetMapping(AppPath.GET_BY_URL_NAME)
     @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_MEMBER')")
-    public ResponseEntity<?> getGenreByName(@PathVariable String urlName) {
-        GenreWithListBookResponse genreWithListBookResponse = genreService.getListBookByUrlName(urlName);
-        CommonResponse<GenreWithListBookResponse> response = CommonResponse.<GenreWithListBookResponse>builder()
+    public ResponseEntity<?> getGenreByName(@PathVariable String urlName,
+            @RequestParam(defaultValue = "0") Integer page,
+            @RequestParam(defaultValue = "5") Integer size) {
+        GenreWithListBookResponse genreWithListBookResponse = genreService.getListBookByUrlName(urlName, page, size);
+        int totalPage = (int) Math.ceil((double) genreWithListBookResponse.getTotalBooks() / size);
+
+        PagingResponse pagingResponse = PagingResponse.builder()
+                .currentPage(page)
+                .totalPage(totalPage)
+                .size(size)
+                .build();
+
+        CommonResponseWithPage<GenreWithListBookResponse> response = CommonResponseWithPage.<GenreWithListBookResponse>builder()
                 .statusCode(HttpStatus.OK.value())
                 .message("Genre retrieved successfully.")
                 .data(genreWithListBookResponse)
+                .paging(pagingResponse)
                 .build();
 
         return ResponseEntity.status(HttpStatus.OK).body(response);

@@ -25,7 +25,7 @@ public interface AuthorService {
 
     AuthorResponse getByIdWithDto(Long id);
 
-    AuthorWithListBookResponse getListBookByUrlName(String urlName);
+    AuthorWithListBookResponse getListBookByUrlName(String urlName, int page, int size);
 
     AuthorResponse updateWithDto(Long id, AuthorRequest request);
 
