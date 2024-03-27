@@ -3,6 +3,8 @@ package com.nandaliyan.mylibapi.service.impl;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import com.nandaliyan.mylibapi.exception.AuthorNotFoundException;
@@ -79,12 +81,10 @@ public class AuthorServiceImpl implements AuthorService {
     }
 
     @Override
-    public List<AuthorResponse> getAllWithDto() {
-        List<Author> authors = authorRepository.findAll();
+    public Page<AuthorResponse> getAllWithDto(Integer page, Integer size) {
+        Page<Author> authors = authorRepository.findAll(PageRequest.of(page, size));
 
-        return authors.stream()
-                .map(this::convertToAuthorResponse)
-                .toList();
+        return authors.map(this::convertToAuthorResponse);
     }
 
     @Override

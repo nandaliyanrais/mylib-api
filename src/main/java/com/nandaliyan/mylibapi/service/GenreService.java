@@ -1,6 +1,6 @@
 package com.nandaliyan.mylibapi.service;
 
-import java.util.List;
+import org.springframework.data.domain.Page;
 
 import com.nandaliyan.mylibapi.model.entity.Genre;
 import com.nandaliyan.mylibapi.model.request.GenreRequest;
@@ -9,7 +9,7 @@ import com.nandaliyan.mylibapi.model.response.GenreWithListBookResponse;
 
 public interface GenreService {
 
-    List<Genre> saveAll(List<Genre> genres);
+    // List<Genre> saveAll(List<Genre> genres);
     
     Genre getById(Long id);
 
@@ -19,7 +19,7 @@ public interface GenreService {
 
     GenreResponse createWithDto(GenreRequest request);
     
-    List<GenreResponse> getAllWithDto();
+    Page<GenreResponse> getAllWithDto(Integer page, Integer size);
 
     GenreResponse getByIdWithDto(Long id);
 

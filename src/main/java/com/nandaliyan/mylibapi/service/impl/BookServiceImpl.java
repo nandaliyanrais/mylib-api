@@ -93,21 +93,26 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public List<BookResponse> getAllWithDto() {
-        List<BookResponse> bookResponses = bookRepository.findAll().stream()
-                .map(book -> convertToBookResponse(book.getAuthor(), book.getPublisher(), book.getGenre(), book))
-                .toList();
+    public Page<BookResponse> getAllWithDto(Integer page, Integer size) {
+        Page<BookResponse> bookResponses = bookRepository.findAll(PageRequest.of(page, size))
+                .map(book -> convertToBookResponse(book.getAuthor(), book.getPublisher(), book.getGenre(), book));
+
                 
         return bookResponses;
     }
 
     @Override
-    public List<BookResponse> getAllAvailableBook() {
-        List<BookResponse> bookResponses = bookRepository.findAllByIsAvailableTrue().stream()
+    public Page<BookResponse> getAllAvailableBook(Integer page, Integer size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Book> books = bookRepository.findAllByIsAvailableTrue(pageable);
+        
+        List<BookResponse> bookResponses = books.stream()
                 .map(book -> convertToBookResponse(book.getAuthor(), book.getPublisher(), book.getGenre(), book))
                 .toList();
 
-        return bookResponses;
+        Page<BookResponse> responsePage = new PageImpl<>(bookResponses, pageable, books.getTotalElements());
+
+        return responsePage;
     }
 
     @Override
@@ -121,7 +126,7 @@ public class BookServiceImpl implements BookService {
                 Predicate predicate = criteriaBuilder.like(criteriaBuilder.lower(root.get("title")), "%" + title.toLowerCase() + "%");
                 predicates.add(predicate);
             }
-            
+
             Predicate[] array = new Predicate[predicates.size()];
             return query.where(predicates.toArray(array)).getRestriction();
         };

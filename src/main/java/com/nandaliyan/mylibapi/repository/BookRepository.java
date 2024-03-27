@@ -1,8 +1,9 @@
 package com.nandaliyan.mylibapi.repository;
 
-import java.util.List;
 import java.util.Optional;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
@@ -23,6 +24,6 @@ public interface BookRepository extends JpaRepository<Book, Long>, JpaSpecificat
     Optional<Book> findByUrlName(String urlName);
 
     @Query(value = "SELECT * FROM m_book WHERE is_available = true", nativeQuery = true)
-    List<Book> findAllByIsAvailableTrue();
+    Page<Book> findAllByIsAvailableTrue(Pageable pageable);
     
 }

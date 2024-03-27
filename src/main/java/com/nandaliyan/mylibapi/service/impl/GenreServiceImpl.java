@@ -3,6 +3,8 @@ package com.nandaliyan.mylibapi.service.impl;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import com.nandaliyan.mylibapi.exception.GenreNotFoundException;
@@ -23,10 +25,10 @@ public class GenreServiceImpl implements GenreService {
 
     private final GenreRepository genreRepository;    
 
-    @Override
-    public List<Genre> saveAll(List<Genre> genres) {
-        return genreRepository.saveAll(genres);
-    }
+    // @Override
+    // public List<Genre> saveAll(List<Genre> genres) {
+    //     return genreRepository.saveAll(genres);
+    // }
 
     @Override
     public Genre getById(Long id) {
@@ -74,12 +76,10 @@ public class GenreServiceImpl implements GenreService {
     }
 
     @Override
-    public List<GenreResponse> getAllWithDto() {
-        List<Genre> genres = genreRepository.findAll();
+    public Page<GenreResponse> getAllWithDto(Integer page, Integer size) {
+        Page<Genre> genres = genreRepository.findAll(PageRequest.of(page, size));
 
-        return genres.stream()
-                .map(this::convertToGenreResponse)
-                .toList();
+        return genres.map(this::convertToGenreResponse);
     }
 
     @Override

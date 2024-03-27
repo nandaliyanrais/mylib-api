@@ -1,7 +1,5 @@
 package com.nandaliyan.mylibapi.service;
 
-import java.util.List;
-
 import org.springframework.data.domain.Page;
 
 import com.nandaliyan.mylibapi.model.entity.Book;
@@ -20,9 +18,9 @@ public interface BookService {
     
     BookResponse createWithDto(BookRequest request);
     
-    List<BookResponse> getAllWithDto();
+    Page<BookResponse> getAllWithDto(Integer page, Integer size);
 
-    List<BookResponse> getAllAvailableBook();
+    Page<BookResponse> getAllAvailableBook(Integer page, Integer size);
 
     Page<BookResponse> search(String title, Integer page, Integer size);
 

@@ -3,6 +3,8 @@ package com.nandaliyan.mylibapi.service.impl;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import com.nandaliyan.mylibapi.exception.PublisherNotFoundException;
@@ -74,12 +76,10 @@ public class PublisherServiceImpl implements PublisherService {
     }
 
     @Override
-    public List<PublisherResponse> getAllWithDto() {
-        List<Publisher> publishers = publisherRepository.findAll();
+    public Page<PublisherResponse> getAllWithDto(Integer page, Integer size) {
+        Page<Publisher> publishers = publisherRepository.findAll(PageRequest.of(page, size));
 
-        return publishers.stream()
-                .map(this::convertToPublisherResponse)
-                .toList();
+        return publishers.map(this::convertToPublisherResponse);
     }
 
     @Override
