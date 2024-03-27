@@ -40,6 +40,9 @@ public class Book {
     @Column(unique = true)
     private String title;
 
+    @Column(unique = true)
+    private String urlName;
+
     @ManyToOne
     private Author author;
 
@@ -55,7 +58,7 @@ public class Book {
     @Builder.Default
     private List<Genre> genre = new ArrayList<>();
     
-    private Integer year;
+    private String year;
 
     private String description;
 

@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.nandaliyan.mylibapi.constant.AppPath;
 import com.nandaliyan.mylibapi.model.request.AuthorRequest;
 import com.nandaliyan.mylibapi.model.response.AuthorResponse;
+import com.nandaliyan.mylibapi.model.response.AuthorWithListBookResponse;
 import com.nandaliyan.mylibapi.model.response.CommonResponse;
 import com.nandaliyan.mylibapi.service.AuthorService;
 
@@ -56,14 +57,27 @@ public class AuthorController {
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
-    @GetMapping(AppPath.GET_BY_ID)
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ResponseEntity<?> getAuthorById(@PathVariable Long id) {
-        AuthorResponse authorResponse = authorService.getByIdWithDto(id);
-        CommonResponse<AuthorResponse> response = CommonResponse.<AuthorResponse>builder()
+    // @GetMapping(AppPath.GET_BY_ID)
+    // @PreAuthorize("hasRole('ROLE_ADMIN')")
+    // public ResponseEntity<?> getAuthorById(@PathVariable Long id) {
+    //     AuthorResponse authorResponse = authorService.getByIdWithDto(id);
+    //     CommonResponse<AuthorResponse> response = CommonResponse.<AuthorResponse>builder()
+    //             .statusCode(HttpStatus.OK.value())
+    //             .message("Author retrieved successfully.")
+    //             .data(authorResponse)
+    //             .build();
+
+    //     return ResponseEntity.status(HttpStatus.OK).body(response);
+    // }
+
+    @GetMapping(AppPath.GET_BY_URL_NAME)
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_MEMBER')")
+    public ResponseEntity<?> getAuthorByName(@PathVariable String urlName) {
+        AuthorWithListBookResponse authorWithListBookResponse = authorService.getListBookByUrlName(urlName);
+        CommonResponse<AuthorWithListBookResponse> response = CommonResponse.<AuthorWithListBookResponse>builder()
                 .statusCode(HttpStatus.OK.value())
                 .message("Author retrieved successfully.")
-                .data(authorResponse)
+                .data(authorWithListBookResponse)
                 .build();
 
         return ResponseEntity.status(HttpStatus.OK).body(response);

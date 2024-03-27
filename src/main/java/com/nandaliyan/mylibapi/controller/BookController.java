@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.nandaliyan.mylibapi.constant.AppPath;
@@ -43,7 +44,7 @@ public class BookController {
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
-    @GetMapping
+    @GetMapping(AppPath.GET_ALL_BOOKS)
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<?> getAllBooks() {
         List<BookResponse> bookResponses = bookService.getAllWithDto();
@@ -56,7 +57,18 @@ public class BookController {
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
-    // get book available by member
+    @GetMapping
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_MEMBER')")
+    public ResponseEntity<?> getAllAvailableBooks(@RequestParam(required = false) String title) {
+        List<BookResponse> bookResponses = bookService.getAllAvailableBook();
+        CommonResponse<List<BookResponse>> response = CommonResponse.<List<BookResponse>>builder()
+                .statusCode(HttpStatus.OK.value())
+                .message("Books retrieved successfully.")
+                .data(bookResponses)
+                .build();
+
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
 
     @GetMapping(AppPath.GET_BY_ID)
     @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_MEMBER')")

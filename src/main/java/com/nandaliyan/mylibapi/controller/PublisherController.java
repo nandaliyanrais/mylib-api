@@ -18,6 +18,7 @@ import com.nandaliyan.mylibapi.constant.AppPath;
 import com.nandaliyan.mylibapi.model.request.PublisherRequest;
 import com.nandaliyan.mylibapi.model.response.CommonResponse;
 import com.nandaliyan.mylibapi.model.response.PublisherResponse;
+import com.nandaliyan.mylibapi.model.response.PublisherWithListBookResponse;
 import com.nandaliyan.mylibapi.service.PublisherService;
 
 import jakarta.validation.Valid;
@@ -56,14 +57,27 @@ public class PublisherController {
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
-    @GetMapping(AppPath.GET_BY_ID)
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ResponseEntity<?> getPublisherById(@PathVariable Long id) {
-        PublisherResponse publisherResponse = publisherService.getByIdWithDto(id);
-        CommonResponse<PublisherResponse> response = CommonResponse.<PublisherResponse>builder()
+    // @GetMapping(AppPath.GET_BY_ID)
+    // @PreAuthorize("hasRole('ROLE_ADMIN')")
+    // public ResponseEntity<?> getPublisherById(@PathVariable Long id) {
+    //     PublisherResponse publisherResponse = publisherService.getByIdWithDto(id);
+    //     CommonResponse<PublisherResponse> response = CommonResponse.<PublisherResponse>builder()
+    //             .statusCode(HttpStatus.OK.value())
+    //             .message("Publisher retrieved successfully.")
+    //             .data(publisherResponse)
+    //             .build();
+        
+    //     return ResponseEntity.status(HttpStatus.OK).body(response);
+    // }
+
+    @GetMapping(AppPath.GET_BY_URL_NAME)
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_MEMBER')")
+    public ResponseEntity<?> getPublisherByName(@PathVariable String urlName) {
+        PublisherWithListBookResponse publisherWithListBookResponse = publisherService.getListBookByUrlName(urlName);
+        CommonResponse<PublisherWithListBookResponse> response = CommonResponse.<PublisherWithListBookResponse>builder()
                 .statusCode(HttpStatus.OK.value())
                 .message("Publisher retrieved successfully.")
-                .data(publisherResponse)
+                .data(publisherWithListBookResponse)
                 .build();
         
         return ResponseEntity.status(HttpStatus.OK).body(response);

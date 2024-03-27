@@ -33,6 +33,9 @@ public class Author {
     @Column(unique = true)
     private String name;
 
+    @Column(unique = true)
+    private String urlName;
+
     @OneToMany(mappedBy = "author")
     private List<Book> book;
 

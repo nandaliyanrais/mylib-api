@@ -19,7 +19,7 @@ public class BookResponse {
     private BookAuthorResponse author;
     private BookPublisherResponse publisher;
     private List<BookGenreResponse> genre;
-    private Integer year;
+    private String year;
     private String description;
     private Integer stock;
     private Boolean isAvailable;

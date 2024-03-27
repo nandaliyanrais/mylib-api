@@ -18,6 +18,7 @@ import com.nandaliyan.mylibapi.constant.AppPath;
 import com.nandaliyan.mylibapi.model.request.GenreRequest;
 import com.nandaliyan.mylibapi.model.response.CommonResponse;
 import com.nandaliyan.mylibapi.model.response.GenreResponse;
+import com.nandaliyan.mylibapi.model.response.GenreWithListBookResponse;
 import com.nandaliyan.mylibapi.service.GenreService;
 
 import jakarta.validation.Valid;
@@ -56,14 +57,27 @@ public class GenreController {
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
-    @GetMapping(AppPath.GET_BY_ID)
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ResponseEntity<?> getGenreById(@PathVariable Long id) {
-        GenreResponse genreResponse = genreService.getByIdWithDto(id);
-        CommonResponse<GenreResponse> response = CommonResponse.<GenreResponse>builder()
+    // @GetMapping(AppPath.GET_BY_ID)
+    // @PreAuthorize("hasRole('ROLE_ADMIN')")
+    // public ResponseEntity<?> getGenreById(@PathVariable Long id) {
+    //     GenreResponse genreResponse = genreService.getByIdWithDto(id);
+    //     CommonResponse<GenreResponse> response = CommonResponse.<GenreResponse>builder()
+    //             .statusCode(HttpStatus.OK.value())
+    //             .message("Genre retrieved successfully.")
+    //             .data(genreResponse)
+    //             .build();
+
+    //     return ResponseEntity.status(HttpStatus.OK).body(response);
+    // }
+
+    @GetMapping(AppPath.GET_BY_URL_NAME)
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_MEMBER')")
+    public ResponseEntity<?> getGenreByName(@PathVariable String urlName) {
+        GenreWithListBookResponse genreWithListBookResponse = genreService.getListBookByUrlName(urlName);
+        CommonResponse<GenreWithListBookResponse> response = CommonResponse.<GenreWithListBookResponse>builder()
                 .statusCode(HttpStatus.OK.value())
                 .message("Genre retrieved successfully.")
-                .data(genreResponse)
+                .data(genreWithListBookResponse)
                 .build();
 
         return ResponseEntity.status(HttpStatus.OK).body(response);

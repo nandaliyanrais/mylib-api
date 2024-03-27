@@ -30,7 +30,7 @@ public class BookRequest {
     private List<String> genres;
 
     @NotNull
-    private Integer year;
+    private String year;
     
     private String description;
 
