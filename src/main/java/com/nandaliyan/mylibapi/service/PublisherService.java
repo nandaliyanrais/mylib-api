@@ -1,14 +1,19 @@
 package com.nandaliyan.mylibapi.service;
 
-import java.util.List;
+import org.springframework.data.domain.Page;
 
 import com.nandaliyan.mylibapi.model.entity.Publisher;
 import com.nandaliyan.mylibapi.model.request.PublisherRequest;
 import com.nandaliyan.mylibapi.model.response.PublisherResponse;
+import com.nandaliyan.mylibapi.model.response.PublisherWithListBookResponse;
 
 public interface PublisherService {
 
+    Publisher save(Publisher publisher);
+
     Publisher getById(Long id);    
+
+    Publisher getByUrlName(String urlName);
 
     Publisher getOrCreateByName(String name);
 
@@ -16,7 +21,9 @@ public interface PublisherService {
 
     PublisherResponse getByIdWithDto(Long id);
 
-    List<PublisherResponse> getAllWithDto();
+    Page<PublisherResponse> getAllWithDto(Integer page, Integer size);
+
+    PublisherWithListBookResponse getListBookByUrlName(String urlName);
 
     PublisherResponse updateWithDto(Long id, PublisherRequest request);
 

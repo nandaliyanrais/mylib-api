@@ -13,5 +13,8 @@ public interface GenreRepository extends JpaRepository<Genre, Long> {
 
     @Query(value = "SELECT * FROM m_genre WHERE name = ?1", nativeQuery = true)
     Optional<Genre> findByName(String name);
+
+    @Query(value = "SELECT * FROM m_genre WHERE url_name = ?1", nativeQuery = true)
+    Optional<Genre> findByUrlName(String urlName);
     
 }

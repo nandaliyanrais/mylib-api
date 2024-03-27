@@ -1,7 +1,6 @@
 package com.nandaliyan.mylibapi.service;
 
-import java.util.List;
-
+import org.springframework.data.domain.Page;
 import org.springframework.security.core.Authentication;
 
 import com.nandaliyan.mylibapi.model.entity.BorrowingRecord;
@@ -19,7 +18,7 @@ public interface BorrowingRecordService {
 
     ReturnResponse returnBook(ReturnRequest request, Authentication authentication);
 
-    List<BorrowingRecordResponse> getAllWithDto();
+    Page<BorrowingRecordResponse> getAllWithDto(Integer page, Integer size);
 
     BorrowingRecordResponse getByIdWithDto(String id);
 

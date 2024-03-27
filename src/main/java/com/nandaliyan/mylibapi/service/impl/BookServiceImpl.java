@@ -5,6 +5,11 @@ import java.util.List;
 import java.util.Random;
 import java.util.stream.Collectors;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import com.nandaliyan.mylibapi.exception.BookNotAvailableException;
@@ -23,7 +28,10 @@ import com.nandaliyan.mylibapi.service.AuthorService;
 import com.nandaliyan.mylibapi.service.BookService;
 import com.nandaliyan.mylibapi.service.GenreService;
 import com.nandaliyan.mylibapi.service.PublisherService;
+import com.nandaliyan.mylibapi.util.StringUtil;
 
+import jakarta.persistence.criteria.Predicate;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -48,8 +56,14 @@ public class BookServiceImpl implements BookService {
     @Override
     public Book getByBookCode(String bookCode) {
         return bookRepository.findByBookCode(bookCode).orElseThrow(() -> new BookNotFoundException());
+    }    
+
+    @Override
+    public Book getByUrlName(String urlName) {
+        return bookRepository.findByUrlName(urlName).orElseThrow(() -> new BookNotFoundException());
     }
 
+    @Transactional(rollbackOn = Exception.class)
     @Override
     public BookResponse createWithDto(BookRequest request) {
         Author author = authorService.getOrCreateByName(request.getAuthor());
@@ -64,6 +78,7 @@ public class BookServiceImpl implements BookService {
         Book book = Book.builder()
                 .bookCode(generateBookCode(request.getAuthor(), request.getTitle()))
                 .title(request.getTitle())
+                .urlName(StringUtil.formatNameForUrl(request.getTitle()))
                 .author(author)
                 .publisher(publisher)
                 .genre(genres)
@@ -72,18 +87,58 @@ public class BookServiceImpl implements BookService {
                 .stock(request.getStock())
                 .isAvailable(true)
                 .build();
-        bookRepository.save(book);
+        bookRepository.saveAndFlush(book);
 
         return convertToBookResponse(author, publisher, genres, book);
     }
 
     @Override
-    public List<BookResponse> getAllWithDto() {
-        List<BookResponse> bookResponses = bookRepository.findAll().stream()
-                .map(book -> convertToBookResponse(book.getAuthor(), book.getPublisher(), book.getGenre(), book))
-                .toList();
+    public Page<BookResponse> getAllWithDto(Integer page, Integer size) {
+        Page<BookResponse> bookResponses = bookRepository.findAll(PageRequest.of(page, size))
+                .map(book -> convertToBookResponse(book.getAuthor(), book.getPublisher(), book.getGenre(), book));
+
                 
         return bookResponses;
+    }
+
+    @Override
+    public Page<BookResponse> getAllAvailableBook(Integer page, Integer size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Book> books = bookRepository.findAllByIsAvailableTrue(pageable);
+        
+        List<BookResponse> bookResponses = books.stream()
+                .map(book -> convertToBookResponse(book.getAuthor(), book.getPublisher(), book.getGenre(), book))
+                .toList();
+
+        Page<BookResponse> responsePage = new PageImpl<>(bookResponses, pageable, books.getTotalElements());
+
+        return responsePage;
+    }
+
+    @Override
+    public Page<BookResponse> search(String title, Integer page, Integer size) {
+        Specification<Book> specification = (root, query, criteriaBuilder) -> {
+            List<Predicate> predicates = new ArrayList<>();
+
+            predicates.add(criteriaBuilder.equal(root.get("isAvailable"), Boolean.TRUE));
+
+            if(title != null && !title.isEmpty()) {
+                Predicate predicate = criteriaBuilder.like(criteriaBuilder.lower(root.get("title")), "%" + title.toLowerCase() + "%");
+                predicates.add(predicate);
+            }
+
+            Predicate[] array = new Predicate[predicates.size()];
+            return query.where(predicates.toArray(array)).getRestriction();
+        };
+
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Book> books = bookRepository.findAll(specification, pageable);
+
+        List<BookResponse> bookResponses = books.stream()
+                .map(book -> convertToBookResponse(book.getAuthor(), book.getPublisher(), book.getGenre(), book))
+                .toList();                
+        
+        return new PageImpl<>(bookResponses, pageable, books.getTotalElements());
     }
 
     @Override
@@ -107,6 +162,7 @@ public class BookServiceImpl implements BookService {
                 .id(existingBook.getId())
                 .bookCode(existingBook.getBookCode())
                 .title(request.getTitle())
+                .urlName(StringUtil.formatNameForUrl(request.getTitle()))
                 .author(author)
                 .publisher(publisher)
                 .genre(genres)

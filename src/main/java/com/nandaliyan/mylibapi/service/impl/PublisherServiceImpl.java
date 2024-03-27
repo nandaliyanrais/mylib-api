@@ -3,14 +3,19 @@ package com.nandaliyan.mylibapi.service.impl;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import com.nandaliyan.mylibapi.exception.PublisherNotFoundException;
 import com.nandaliyan.mylibapi.model.entity.Publisher;
 import com.nandaliyan.mylibapi.model.request.PublisherRequest;
+import com.nandaliyan.mylibapi.model.response.ListBookResponse;
 import com.nandaliyan.mylibapi.model.response.PublisherResponse;
+import com.nandaliyan.mylibapi.model.response.PublisherWithListBookResponse;
 import com.nandaliyan.mylibapi.repository.PublisherRepository;
 import com.nandaliyan.mylibapi.service.PublisherService;
+import com.nandaliyan.mylibapi.util.StringUtil;
 
 import lombok.RequiredArgsConstructor;
 
@@ -21,8 +26,18 @@ public class PublisherServiceImpl implements PublisherService {
     private final PublisherRepository publisherRepository;
 
     @Override
+    public Publisher save(Publisher publisher) {
+        return publisherRepository.save(publisher);
+    }
+
+    @Override
     public Publisher getById(Long id) {
         return publisherRepository.findById(id).orElseThrow(() -> new PublisherNotFoundException());
+    }
+
+    @Override
+    public Publisher getByUrlName(String urlName) {
+        return publisherRepository.findByUrlName(urlName).orElseThrow(() -> new PublisherNotFoundException());
     }
 
     @Override
@@ -40,6 +55,7 @@ public class PublisherServiceImpl implements PublisherService {
         } else {
             Publisher newPublisher = Publisher.builder()
                     .name(name)
+                    .urlName(StringUtil.formatNameForUrl(name))
                     .isActive(true)
                     .build();
                     
@@ -51,6 +67,7 @@ public class PublisherServiceImpl implements PublisherService {
     public PublisherResponse createWithDto(PublisherRequest request) {
         Publisher publisher = Publisher.builder()
                 .name(request.getName())
+                .urlName(StringUtil.formatNameForUrl(request.getName()))
                 .isActive(true)
                 .build();
         publisherRepository.save(publisher);
@@ -59,12 +76,10 @@ public class PublisherServiceImpl implements PublisherService {
     }
 
     @Override
-    public List<PublisherResponse> getAllWithDto() {
-        List<Publisher> publishers = publisherRepository.findAll();
+    public Page<PublisherResponse> getAllWithDto(Integer page, Integer size) {
+        Page<Publisher> publishers = publisherRepository.findAll(PageRequest.of(page, size));
 
-        return publishers.stream()
-                .map(this::convertToPublisherResponse)
-                .toList();
+        return publishers.map(this::convertToPublisherResponse);
     }
 
     @Override
@@ -75,12 +90,20 @@ public class PublisherServiceImpl implements PublisherService {
     }
 
     @Override
+    public PublisherWithListBookResponse getListBookByUrlName(String urlName) {
+        Publisher publisher = getByUrlName(urlName);
+
+        return convertToListBookResponse(publisher);
+    }
+
+    @Override
     public PublisherResponse updateWithDto(Long id, PublisherRequest request) {
         Publisher existingPublisher = getById(id);
 
         existingPublisher = existingPublisher.toBuilder()
                 .id(existingPublisher.getId())
                 .name(request.getName())
+                .urlName(StringUtil.formatNameForUrl(request.getName()))
                 .isActive(existingPublisher.getIsActive())
                 .build();
         publisherRepository.save(existingPublisher);
@@ -100,6 +123,20 @@ public class PublisherServiceImpl implements PublisherService {
                 .id(publisher.getId())
                 .name(publisher.getName())
                 .isActive(publisher.getIsActive())
+                .build();
+    }
+    
+    private PublisherWithListBookResponse convertToListBookResponse(Publisher publisher) {
+        List<ListBookResponse> listBookResponses = publisher.getBook().stream()
+                .map(book -> ListBookResponse.builder()
+                        .title(book.getTitle())
+                        .year(book.getYear())
+                        .build())
+                .toList();
+
+        return PublisherWithListBookResponse.builder()
+                .name(publisher.getName())
+                .book(listBookResponses)
                 .build();
     }
     

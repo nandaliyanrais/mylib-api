@@ -1,7 +1,6 @@
 package com.nandaliyan.mylibapi.controller;
 
-import java.util.List;
-
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -12,12 +11,16 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.nandaliyan.mylibapi.constant.AppPath;
 import com.nandaliyan.mylibapi.model.request.PublisherRequest;
 import com.nandaliyan.mylibapi.model.response.CommonResponse;
+import com.nandaliyan.mylibapi.model.response.CommonResponseWithPage;
+import com.nandaliyan.mylibapi.model.response.PagingResponse;
 import com.nandaliyan.mylibapi.model.response.PublisherResponse;
+import com.nandaliyan.mylibapi.model.response.PublisherWithListBookResponse;
 import com.nandaliyan.mylibapi.service.PublisherService;
 
 import jakarta.validation.Valid;
@@ -45,25 +48,44 @@ public class PublisherController {
 
     @GetMapping
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ResponseEntity<?> getAllPublishers() {
-        List<PublisherResponse> publisherResponses = publisherService.getAllWithDto();
-        CommonResponse<List<PublisherResponse>> response = CommonResponse.<List<PublisherResponse>>builder()
+    public ResponseEntity<?> getAllPublishers(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "10") Integer size) {
+        Page<PublisherResponse> publisherResponses = publisherService.getAllWithDto(page, size);
+        PagingResponse pagingResponse = PagingResponse.builder()
+                .currentPage(page)
+                .totalPage(publisherResponses.getTotalPages())
+                .size(size)
+                .build();
+        CommonResponseWithPage<Page<PublisherResponse>> response = CommonResponseWithPage.<Page<PublisherResponse>>builder()
                 .statusCode(HttpStatus.OK.value())
                 .message("Publishers retrieved successfully.")
                 .data(publisherResponses)
+                .paging(pagingResponse)
                 .build();
         
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
-    @GetMapping(AppPath.GET_BY_ID)
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ResponseEntity<?> getPublisherById(@PathVariable Long id) {
-        PublisherResponse publisherResponse = publisherService.getByIdWithDto(id);
-        CommonResponse<PublisherResponse> response = CommonResponse.<PublisherResponse>builder()
+    // @GetMapping(AppPath.GET_BY_ID)
+    // @PreAuthorize("hasRole('ROLE_ADMIN')")
+    // public ResponseEntity<?> getPublisherById(@PathVariable Long id) {
+    //     PublisherResponse publisherResponse = publisherService.getByIdWithDto(id);
+    //     CommonResponse<PublisherResponse> response = CommonResponse.<PublisherResponse>builder()
+    //             .statusCode(HttpStatus.OK.value())
+    //             .message("Publisher retrieved successfully.")
+    //             .data(publisherResponse)
+    //             .build();
+        
+    //     return ResponseEntity.status(HttpStatus.OK).body(response);
+    // }
+
+    @GetMapping(AppPath.GET_BY_URL_NAME)
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_MEMBER')")
+    public ResponseEntity<?> getPublisherByName(@PathVariable String urlName) {
+        PublisherWithListBookResponse publisherWithListBookResponse = publisherService.getListBookByUrlName(urlName);
+        CommonResponse<PublisherWithListBookResponse> response = CommonResponse.<PublisherWithListBookResponse>builder()
                 .statusCode(HttpStatus.OK.value())
                 .message("Publisher retrieved successfully.")
-                .data(publisherResponse)
+                .data(publisherWithListBookResponse)
                 .build();
         
         return ResponseEntity.status(HttpStatus.OK).body(response);
