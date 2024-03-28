@@ -14,5 +14,6 @@ public class ReturnResponse {
     private String title;
     private String returnedBy;
     private LocalDateTime returnedAt;
+    private Long fineAmount;
     
 }

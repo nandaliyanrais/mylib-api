@@ -27,7 +27,7 @@ public class BorrowController {
     private final BorrowingRecordService borrowingRecordService;
 
     @PostMapping(AppPath.BORROW_PATH)
-    @PreAuthorize("hasAnyRole('ROLE_MEMBER', 'ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ROLE_MEMBER')")
     public ResponseEntity<?> borrowBook(@RequestBody BorrowRequest request, Authentication authentication) {
         BorrowResponse borrowResponse = borrowingRecordService.borrowBook(request, authentication);
         CommonResponse<BorrowResponse> response = CommonResponse.<BorrowResponse>builder()
@@ -40,7 +40,7 @@ public class BorrowController {
     }
 
     @PostMapping(AppPath.RETURN_PATH)
-    @PreAuthorize("hasAnyRole('ROLE_MEMBER', 'ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ROLE_MEMBER')")
     public ResponseEntity<?> returnBook(@RequestBody ReturnRequest request, Authentication authentication) {
         ReturnResponse returnResponse = borrowingRecordService.returnBook(request, authentication);
         CommonResponse<ReturnResponse> response = CommonResponse.<ReturnResponse>builder()

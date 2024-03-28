@@ -133,6 +133,7 @@ public class BorrowingRecordServiceImpl implements BorrowingRecordService {
                 .title(borrowingRecord.getBook().getTitle())
                 .returnedAt(borrowingRecord.getReturnedAt())
                 .returnedBy(borrowingRecord.getReturnedBy())
+                .fineAmount(borrowingRecord.getFineAmount())
                 .build();
     }
 
