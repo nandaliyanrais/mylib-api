@@ -13,5 +13,8 @@ public interface PublisherRepository extends JpaRepository<Publisher, Long> {
     
     @Query(value = "SELECT * FROM m_publisher WHERE name = ?1", nativeQuery = true)
     Optional<Publisher> findByName(String name);
+
+    @Query(value = "SELECT * FROM m_publisher WHERE url_name = ?1", nativeQuery = true)
+    Optional<Publisher> findByUrlName(String urlName);
     
 }

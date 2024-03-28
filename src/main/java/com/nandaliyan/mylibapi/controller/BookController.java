@@ -1,7 +1,6 @@
 package com.nandaliyan.mylibapi.controller;
 
-import java.util.List;
-
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -12,12 +11,15 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.nandaliyan.mylibapi.constant.AppPath;
 import com.nandaliyan.mylibapi.model.request.BookRequest;
 import com.nandaliyan.mylibapi.model.response.BookResponse;
 import com.nandaliyan.mylibapi.model.response.CommonResponse;
+import com.nandaliyan.mylibapi.model.response.CommonResponseWithPage;
+import com.nandaliyan.mylibapi.model.response.PagingResponse;
 import com.nandaliyan.mylibapi.service.BookService;
 
 import jakarta.validation.Valid;
@@ -43,20 +45,46 @@ public class BookController {
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
-    @GetMapping
+    @GetMapping(AppPath.GET_ALL_BOOKS)
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ResponseEntity<?> getAllBooks() {
-        List<BookResponse> bookResponses = bookService.getAllWithDto();
-        CommonResponse<List<BookResponse>> response = CommonResponse.<List<BookResponse>>builder()
+    public ResponseEntity<?> getAllBooks(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "10") Integer size) {
+        Page<BookResponse> bookResponses = bookService.getAllWithDto(page, size);
+        PagingResponse pagingResponse = PagingResponse.builder()
+                .currentPage(page)
+                .totalPage(bookResponses.getTotalPages())
+                .size(size)
+                .build();
+        CommonResponseWithPage<Page<BookResponse>> response = CommonResponseWithPage.<Page<BookResponse>>builder()
                 .statusCode(HttpStatus.OK.value())
                 .message("Books retrieved successfully.")
                 .data(bookResponses)
+                .paging(pagingResponse)            
                 .build();
 
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
-    // get book available by member
+    @GetMapping
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_MEMBER')")
+    public ResponseEntity<?> getAllAvailableBooks(
+            @RequestParam(required = false) String title, 
+            @RequestParam(defaultValue = "0") Integer page, 
+            @RequestParam(defaultValue = "10") Integer size) {
+        Page<BookResponse> bookResponses = bookService.getAllAvailableBook(page, size);
+        PagingResponse pagingResponse = PagingResponse.builder()
+                .currentPage(page)
+                .totalPage(bookResponses.getTotalPages())
+                .size(size)
+                .build();
+        CommonResponseWithPage<Page<BookResponse>> response = CommonResponseWithPage.<Page<BookResponse>>builder()
+                .statusCode(HttpStatus.OK.value())
+                .message("Books retrieved successfully.")
+                .data(bookResponses)
+                .paging(pagingResponse)
+                .build();
+
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
 
     @GetMapping(AppPath.GET_BY_ID)
     @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_MEMBER')")

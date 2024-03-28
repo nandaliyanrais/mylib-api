@@ -1,7 +1,6 @@
 package com.nandaliyan.mylibapi.controller;
 
-import java.util.List;
-
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -12,6 +11,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.nandaliyan.mylibapi.constant.AppPath;
@@ -20,7 +20,9 @@ import com.nandaliyan.mylibapi.model.entity.AppUser;
 import com.nandaliyan.mylibapi.model.entity.Member;
 import com.nandaliyan.mylibapi.model.request.MemberUpdateRequest;
 import com.nandaliyan.mylibapi.model.response.CommonResponse;
+import com.nandaliyan.mylibapi.model.response.CommonResponseWithPage;
 import com.nandaliyan.mylibapi.model.response.MemberResponse;
+import com.nandaliyan.mylibapi.model.response.PagingResponse;
 import com.nandaliyan.mylibapi.service.MemberService;
 
 import jakarta.validation.Valid;
@@ -35,12 +37,18 @@ public class MemberController {
 
     @GetMapping
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ResponseEntity<?> getAllMembers() {
-        List<MemberResponse> memberResponses = memberService.getAllWithDto();
-        CommonResponse<List<MemberResponse>> response = CommonResponse.<List<MemberResponse>>builder()
+    public ResponseEntity<?> getAllMembers(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "10") Integer size) {
+        Page<MemberResponse> memberResponses = memberService.getAllWithDto(page, size);
+        PagingResponse pagingResponse = PagingResponse.builder()
+                .currentPage(page)
+                .totalPage(memberResponses.getTotalPages())
+                .size(size)
+                .build();
+        CommonResponseWithPage<Page<MemberResponse>> response = CommonResponseWithPage.<Page<MemberResponse>>builder()
                 .statusCode(HttpStatus.OK.value())
                 .message("Members retrieved successfully.")
                 .data(memberResponses)
+                .paging(pagingResponse)
                 .build();
 
         return ResponseEntity.status(HttpStatus.OK).body(response);

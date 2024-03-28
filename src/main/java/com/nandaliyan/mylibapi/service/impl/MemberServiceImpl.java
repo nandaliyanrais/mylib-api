@@ -1,8 +1,9 @@
 package com.nandaliyan.mylibapi.service.impl;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import com.nandaliyan.mylibapi.exception.MemberNotFoundException;
@@ -49,12 +50,10 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public List<MemberResponse> getAllWithDto() {
-        List<Member> members = memberRepository.findAll();
+    public Page<MemberResponse> getAllWithDto(Integer page, Integer size) {
+        Page<Member> members = memberRepository.findAll(PageRequest.of(page, size));
 
-        return members.stream()
-                .map(this::convertToMemberResponse)
-                .toList();
+        return members.map(this::convertToMemberResponse);
     }
 
     @Override

@@ -1,7 +1,6 @@
 package com.nandaliyan.mylibapi.controller;
 
-import java.util.List;
-
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -9,6 +8,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.nandaliyan.mylibapi.constant.AppPath;
@@ -17,6 +17,8 @@ import com.nandaliyan.mylibapi.model.entity.AppUser;
 import com.nandaliyan.mylibapi.model.entity.Member;
 import com.nandaliyan.mylibapi.model.response.BorrowingRecordResponse;
 import com.nandaliyan.mylibapi.model.response.CommonResponse;
+import com.nandaliyan.mylibapi.model.response.CommonResponseWithPage;
+import com.nandaliyan.mylibapi.model.response.PagingResponse;
 import com.nandaliyan.mylibapi.service.BorrowingRecordService;
 
 import lombok.RequiredArgsConstructor;
@@ -30,12 +32,18 @@ public class BorrowingRecordController {
 
     @GetMapping
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ResponseEntity<?> getAllBorrowingRecords() {
-        List<BorrowingRecordResponse> borrowingRecordResponses = borrowingRecordService.getAllWithDto();
-        CommonResponse<List<BorrowingRecordResponse>> response = CommonResponse.<List<BorrowingRecordResponse>>builder()
+    public ResponseEntity<?> getAllBorrowingRecords(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "10") Integer size) {
+        Page<BorrowingRecordResponse> borrowingRecordResponses = borrowingRecordService.getAllWithDto(page, size);
+        PagingResponse pagingResponse = PagingResponse.builder()
+                .currentPage(page)
+                .totalPage(borrowingRecordResponses.getTotalPages())
+                .size(size)
+                .build();
+        CommonResponseWithPage<Page<BorrowingRecordResponse>> response = CommonResponseWithPage.<Page<BorrowingRecordResponse>>builder()
                 .statusCode(HttpStatus.OK.value())
                 .message("Borrowing records retrieved successfully.")
                 .data(borrowingRecordResponses)
+                .paging(pagingResponse)
                 .build();
         
         return ResponseEntity.status(HttpStatus.OK).body(response);

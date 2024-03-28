@@ -3,8 +3,9 @@ package com.nandaliyan.mylibapi.service.impl;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
-import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
@@ -92,10 +93,9 @@ public class BorrowingRecordServiceImpl implements BorrowingRecordService {
     }
 
     @Override
-    public List<BorrowingRecordResponse> getAllWithDto() {
-        List<BorrowingRecordResponse> borrowingRecordResponses = borrowingRecordRepository.findAll().stream()
-                .map(borrowingRecord -> convertToBorrowingRecordResponse(borrowingRecord.getMember(), borrowingRecord.getBook(), borrowingRecord))
-                .toList();
+    public Page<BorrowingRecordResponse> getAllWithDto(Integer page, Integer size) {
+        Page<BorrowingRecordResponse> borrowingRecordResponses = borrowingRecordRepository.findAll(PageRequest.of(page, size))
+                .map(borrowingRecord -> convertToBorrowingRecordResponse(borrowingRecord.getMember(), borrowingRecord.getBook(), borrowingRecord));
 
         return borrowingRecordResponses;
     }

@@ -1,7 +1,6 @@
 package com.nandaliyan.mylibapi.controller;
 
-import java.util.List;
-
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -12,12 +11,16 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.nandaliyan.mylibapi.constant.AppPath;
 import com.nandaliyan.mylibapi.model.request.AuthorRequest;
 import com.nandaliyan.mylibapi.model.response.AuthorResponse;
+import com.nandaliyan.mylibapi.model.response.AuthorWithListBookResponse;
 import com.nandaliyan.mylibapi.model.response.CommonResponse;
+import com.nandaliyan.mylibapi.model.response.CommonResponseWithPage;
+import com.nandaliyan.mylibapi.model.response.PagingResponse;
 import com.nandaliyan.mylibapi.service.AuthorService;
 
 import jakarta.validation.Valid;
@@ -45,25 +48,55 @@ public class AuthorController {
 
     @GetMapping
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ResponseEntity<?> getAllAuthors() {
-        List<AuthorResponse> authorResponses = authorService.getAllWithDto();
-        CommonResponse<List<AuthorResponse>> response = CommonResponse.<List<AuthorResponse>>builder()
+    public ResponseEntity<?> getAllAuthors(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "10") Integer size) {
+        Page<AuthorResponse> authorResponses = authorService.getAllWithDto(page, size);
+        PagingResponse pagingResponse = PagingResponse.builder()
+                .currentPage(page)
+                .totalPage(authorResponses.getTotalPages())
+                .size(size)
+                .build();
+        CommonResponseWithPage<Page<AuthorResponse>> response = CommonResponseWithPage.<Page<AuthorResponse>>builder()
                 .statusCode(HttpStatus.OK.value())
                 .message("Authors retrieved successfully.")
                 .data(authorResponses)
+                .paging(pagingResponse)
                 .build();
 
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
-    @GetMapping(AppPath.GET_BY_ID)
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ResponseEntity<?> getAuthorById(@PathVariable Long id) {
-        AuthorResponse authorResponse = authorService.getByIdWithDto(id);
-        CommonResponse<AuthorResponse> response = CommonResponse.<AuthorResponse>builder()
+    // @GetMapping(AppPath.GET_BY_ID)
+    // @PreAuthorize("hasRole('ROLE_ADMIN')")
+    // public ResponseEntity<?> getAuthorById(@PathVariable Long id) {
+    //     AuthorResponse authorResponse = authorService.getByIdWithDto(id);
+    //     CommonResponse<AuthorResponse> response = CommonResponse.<AuthorResponse>builder()
+    //             .statusCode(HttpStatus.OK.value())
+    //             .message("Author retrieved successfully.")
+    //             .data(authorResponse)
+    //             .build();
+
+    //     return ResponseEntity.status(HttpStatus.OK).body(response);
+    // }
+
+    @GetMapping(AppPath.GET_BY_URL_NAME)
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_MEMBER')")
+    public ResponseEntity<?> getAuthorByName(@PathVariable String urlName, 
+            @RequestParam(defaultValue = "0") Integer page, 
+            @RequestParam(defaultValue = "5") Integer size) {
+        AuthorWithListBookResponse authorWithListBookResponse = authorService.getListBookByUrlName(urlName, page, size);
+        int totalPage = (int) Math.ceil((double) authorWithListBookResponse.getTotalBooks() / size);
+
+        PagingResponse pagingResponse = PagingResponse.builder()
+                .currentPage(page)
+                .totalPage(totalPage)
+                .size(size)
+                .build();
+
+        CommonResponseWithPage<AuthorWithListBookResponse> response = CommonResponseWithPage.<AuthorWithListBookResponse>builder()
                 .statusCode(HttpStatus.OK.value())
                 .message("Author retrieved successfully.")
-                .data(authorResponse)
+                .data(authorWithListBookResponse)
+                .paging(pagingResponse)
                 .build();
 
         return ResponseEntity.status(HttpStatus.OK).body(response);

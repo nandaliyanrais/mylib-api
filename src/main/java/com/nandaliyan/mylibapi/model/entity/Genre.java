@@ -9,7 +9,9 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -33,7 +35,15 @@ public class Genre {
     @Column(unique = true)
     private String name;
 
-    @OneToMany(mappedBy = "genre")
+    @Column(unique = true)
+    private String urlName;
+
+    @ManyToMany
+    @JoinTable(
+        name = DbTableSchema.BOOK_GENRE_SCHEMA,
+        joinColumns = @JoinColumn(name = "genre_id"),
+        inverseJoinColumns = @JoinColumn(name = "book_id")
+    )
     private List<Book> book;
     
     private Boolean isActive;

@@ -33,6 +33,9 @@ public class Publisher {
     @Column(unique = true)
     private String name;
 
+    @Column(unique = true)
+    private String urlName;
+
     @OneToMany(mappedBy = "publisher")
     private List<Book> book;
 
