@@ -23,12 +23,14 @@ import com.nandaliyan.mylibapi.model.response.GenreWithListBookResponse;
 import com.nandaliyan.mylibapi.model.response.PagingResponse;
 import com.nandaliyan.mylibapi.service.GenreService;
 
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(AppPath.GENRE_PATH)
+@SecurityRequirement(name = AppPath.BEARER_AUTH)
 public class GenreController {
     
     private final GenreService genreService;
@@ -48,8 +50,8 @@ public class GenreController {
 
     @GetMapping
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ResponseEntity<?> getAllGenres(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "10") Integer size) {
-        Page<GenreResponse> genreResponses = genreService.getAllWithDto(page, size);
+    public ResponseEntity<?> getAllGenres(@RequestParam(defaultValue = "1") Integer page, @RequestParam(defaultValue = "10") Integer size) {
+        Page<GenreResponse> genreResponses = genreService.getAllWithDto(page - 1, size);
         PagingResponse pagingResponse = PagingResponse.builder()
                 .currentPage(page)
                 .totalPage(genreResponses.getTotalPages())
@@ -81,9 +83,9 @@ public class GenreController {
     @GetMapping(AppPath.GET_BY_URL_NAME)
     @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_MEMBER')")
     public ResponseEntity<?> getGenreByName(@PathVariable String urlName,
-            @RequestParam(defaultValue = "0") Integer page,
+            @RequestParam(defaultValue = "1") Integer page,
             @RequestParam(defaultValue = "5") Integer size) {
-        GenreWithListBookResponse genreWithListBookResponse = genreService.getListBookByUrlName(urlName, page, size);
+        GenreWithListBookResponse genreWithListBookResponse = genreService.getListBookByUrlName(urlName, page - 1, size);
         int totalPage = (int) Math.ceil((double) genreWithListBookResponse.getTotalBooks() / size);
 
         PagingResponse pagingResponse = PagingResponse.builder()

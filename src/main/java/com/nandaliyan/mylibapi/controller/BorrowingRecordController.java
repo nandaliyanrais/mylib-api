@@ -21,19 +21,21 @@ import com.nandaliyan.mylibapi.model.response.CommonResponseWithPage;
 import com.nandaliyan.mylibapi.model.response.PagingResponse;
 import com.nandaliyan.mylibapi.service.BorrowingRecordService;
 
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(AppPath.BORROWING_RECORD_PATH)
+@SecurityRequirement(name = AppPath.BEARER_AUTH)
 public class BorrowingRecordController {
     
     private final BorrowingRecordService borrowingRecordService;
 
     @GetMapping
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ResponseEntity<?> getAllBorrowingRecords(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "10") Integer size) {
-        Page<BorrowingRecordResponse> borrowingRecordResponses = borrowingRecordService.getAllWithDto(page, size);
+    public ResponseEntity<?> getAllBorrowingRecords(@RequestParam(defaultValue = "1") Integer page, @RequestParam(defaultValue = "10") Integer size) {
+        Page<BorrowingRecordResponse> borrowingRecordResponses = borrowingRecordService.getAllWithDto(page - 1, size);
         PagingResponse pagingResponse = PagingResponse.builder()
                 .currentPage(page)
                 .totalPage(borrowingRecordResponses.getTotalPages())

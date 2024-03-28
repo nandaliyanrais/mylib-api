@@ -16,10 +16,12 @@ import com.nandaliyan.mylibapi.model.response.CommonResponse;
 import com.nandaliyan.mylibapi.model.response.ReturnResponse;
 import com.nandaliyan.mylibapi.service.BorrowingRecordService;
 
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequiredArgsConstructor
+@SecurityRequirement(name = AppPath.BEARER_AUTH)
 public class BorrowController {
 
     private final BorrowingRecordService borrowingRecordService;
