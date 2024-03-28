@@ -23,12 +23,14 @@ import com.nandaliyan.mylibapi.model.response.CommonResponseWithPage;
 import com.nandaliyan.mylibapi.model.response.PagingResponse;
 import com.nandaliyan.mylibapi.service.AuthorService;
 
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(AppPath.AUTHOR_PATH)
+@SecurityRequirement(name = AppPath.BEARER_AUTH)
 public class AuthorController {
     
     private final AuthorService authorService;
@@ -48,8 +50,8 @@ public class AuthorController {
 
     @GetMapping
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ResponseEntity<?> getAllAuthors(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "10") Integer size) {
-        Page<AuthorResponse> authorResponses = authorService.getAllWithDto(page, size);
+    public ResponseEntity<?> getAllAuthors(@RequestParam(defaultValue = "1") Integer page, @RequestParam(defaultValue = "10") Integer size) {
+        Page<AuthorResponse> authorResponses = authorService.getAllWithDto(page - 1, size);
         PagingResponse pagingResponse = PagingResponse.builder()
                 .currentPage(page)
                 .totalPage(authorResponses.getTotalPages())
@@ -81,9 +83,9 @@ public class AuthorController {
     @GetMapping(AppPath.GET_BY_URL_NAME)
     @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_MEMBER')")
     public ResponseEntity<?> getAuthorByName(@PathVariable String urlName, 
-            @RequestParam(defaultValue = "0") Integer page, 
+            @RequestParam(defaultValue = "1") Integer page, 
             @RequestParam(defaultValue = "5") Integer size) {
-        AuthorWithListBookResponse authorWithListBookResponse = authorService.getListBookByUrlName(urlName, page, size);
+        AuthorWithListBookResponse authorWithListBookResponse = authorService.getListBookByUrlName(urlName, page - 1, size);
         int totalPage = (int) Math.ceil((double) authorWithListBookResponse.getTotalBooks() / size);
 
         PagingResponse pagingResponse = PagingResponse.builder()

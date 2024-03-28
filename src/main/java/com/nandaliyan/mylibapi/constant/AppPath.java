@@ -25,5 +25,7 @@ public class AppPath {
     public final static String GET_ALL_BOOKS = "/all-books";
 
     public final static String REGISTER_ADMIN_PATH = ADMIN_PATH + REGISTER_PATH;
-
+    
+    public final static String BEARER_AUTH = "bearerAuth";
+    
 }

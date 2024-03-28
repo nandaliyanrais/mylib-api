@@ -15,11 +15,13 @@ import com.nandaliyan.mylibapi.model.response.CommonResponseWithPage;
 import com.nandaliyan.mylibapi.model.response.PagingResponse;
 import com.nandaliyan.mylibapi.service.BookService;
 
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(AppPath.SEARCH)
+@SecurityRequirement(name = AppPath.BEARER_AUTH)
 public class SearchController {
 
     private final BookService bookService;
@@ -28,10 +30,10 @@ public class SearchController {
     @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_MEMBER')")
     public ResponseEntity<?> search(
         @RequestParam(required = false) String title,
-        @RequestParam(required = false, defaultValue = "0") Integer page,
+        @RequestParam(required = false, defaultValue = "1") Integer page,
         @RequestParam(required = false, defaultValue = "10") Integer size
     ) {
-        Page<BookResponse> bookResponses = bookService.search(title, page, size);
+        Page<BookResponse> bookResponses = bookService.search(title, page - 1, size);
         PagingResponse pagingResponse = PagingResponse.builder()
                 .currentPage(page)
                 .totalPage(bookResponses.getTotalPages())

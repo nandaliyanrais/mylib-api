@@ -23,12 +23,14 @@ import com.nandaliyan.mylibapi.model.response.PublisherResponse;
 import com.nandaliyan.mylibapi.model.response.PublisherWithListBookResponse;
 import com.nandaliyan.mylibapi.service.PublisherService;
 
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(AppPath.PUBLISHER_PATH)
+@SecurityRequirement(name = AppPath.BEARER_AUTH)
 public class PublisherController {
 
     private final PublisherService publisherService;
@@ -48,8 +50,8 @@ public class PublisherController {
 
     @GetMapping
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ResponseEntity<?> getAllPublishers(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "10") Integer size) {
-        Page<PublisherResponse> publisherResponses = publisherService.getAllWithDto(page, size);
+    public ResponseEntity<?> getAllPublishers(@RequestParam(defaultValue = "1") Integer page, @RequestParam(defaultValue = "10") Integer size) {
+        Page<PublisherResponse> publisherResponses = publisherService.getAllWithDto(page - 1, size);
         PagingResponse pagingResponse = PagingResponse.builder()
                 .currentPage(page)
                 .totalPage(publisherResponses.getTotalPages())
@@ -81,9 +83,9 @@ public class PublisherController {
     @GetMapping(AppPath.GET_BY_URL_NAME)
     @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_MEMBER')")
     public ResponseEntity<?> getPublisherByName(@PathVariable String urlName,
-            @RequestParam(defaultValue = "0") Integer page, 
+            @RequestParam(defaultValue = "1") Integer page, 
             @RequestParam(defaultValue = "5") Integer size) {
-        PublisherWithListBookResponse publisherWithListBookResponse = publisherService.getListBookByUrlName(urlName, page, size);
+        PublisherWithListBookResponse publisherWithListBookResponse = publisherService.getListBookByUrlName(urlName, page - 1, size);
         int totalPage = (int) Math.ceil((double) publisherWithListBookResponse.getTotalBooks() / size);
         
         PagingResponse pagingResponse = PagingResponse.builder()

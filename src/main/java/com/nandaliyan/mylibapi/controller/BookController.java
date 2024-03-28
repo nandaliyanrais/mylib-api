@@ -22,12 +22,14 @@ import com.nandaliyan.mylibapi.model.response.CommonResponseWithPage;
 import com.nandaliyan.mylibapi.model.response.PagingResponse;
 import com.nandaliyan.mylibapi.service.BookService;
 
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(AppPath.BOOK_PATH)
+@SecurityRequirement(name = AppPath.BEARER_AUTH)
 public class BookController {
 
     private final BookService bookService;
@@ -47,8 +49,8 @@ public class BookController {
 
     @GetMapping(AppPath.GET_ALL_BOOKS)
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ResponseEntity<?> getAllBooks(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "10") Integer size) {
-        Page<BookResponse> bookResponses = bookService.getAllWithDto(page, size);
+    public ResponseEntity<?> getAllBooks(@RequestParam(defaultValue = "1") Integer page, @RequestParam(defaultValue = "10") Integer size) {
+        Page<BookResponse> bookResponses = bookService.getAllWithDto(page - 1, size);
         PagingResponse pagingResponse = PagingResponse.builder()
                 .currentPage(page)
                 .totalPage(bookResponses.getTotalPages())
@@ -66,11 +68,8 @@ public class BookController {
 
     @GetMapping
     @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_MEMBER')")
-    public ResponseEntity<?> getAllAvailableBooks(
-            @RequestParam(required = false) String title, 
-            @RequestParam(defaultValue = "0") Integer page, 
-            @RequestParam(defaultValue = "10") Integer size) {
-        Page<BookResponse> bookResponses = bookService.getAllAvailableBook(page, size);
+    public ResponseEntity<?> getAllAvailableBooks(@RequestParam(defaultValue = "1") Integer page, @RequestParam(defaultValue = "10") Integer size) {
+        Page<BookResponse> bookResponses = bookService.getAllAvailableBook(page - 1, size);
         PagingResponse pagingResponse = PagingResponse.builder()
                 .currentPage(page)
                 .totalPage(bookResponses.getTotalPages())

@@ -25,20 +25,22 @@ import com.nandaliyan.mylibapi.model.response.MemberResponse;
 import com.nandaliyan.mylibapi.model.response.PagingResponse;
 import com.nandaliyan.mylibapi.service.MemberService;
 
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(AppPath.MEMBER_PATH)
+@SecurityRequirement(name = AppPath.BEARER_AUTH)
 public class MemberController {
     
     private final MemberService memberService;
 
     @GetMapping
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ResponseEntity<?> getAllMembers(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "10") Integer size) {
-        Page<MemberResponse> memberResponses = memberService.getAllWithDto(page, size);
+    public ResponseEntity<?> getAllMembers(@RequestParam(defaultValue = "1") Integer page, @RequestParam(defaultValue = "10") Integer size) {
+        Page<MemberResponse> memberResponses = memberService.getAllWithDto(page - 1, size);
         PagingResponse pagingResponse = PagingResponse.builder()
                 .currentPage(page)
                 .totalPage(memberResponses.getTotalPages())
